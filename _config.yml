@@ -1,0 +1,11 @@
+# Site settings
+
+title: PPAML Summer School 2016
+baseurl: ""
+url: "http://probmods.github.io/ppaml2016/"
+
+# Build settings
+markdown: kramdown
+
+exclude:
+- node_modules
