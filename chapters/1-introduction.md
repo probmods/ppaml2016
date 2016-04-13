@@ -57,7 +57,7 @@ print('Histogram of (bounded) Geometric distribution');
 viz.auto(boundedGeometric);
 ~~~~
 
-Here we link to the [next chapter](/chapters/2-tour.html).
+Here we link to the [next chapter](2-tour.html).
 
 --------------
 
