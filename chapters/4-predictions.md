@@ -5,7 +5,3 @@ description: "The fourth chapter"
 ---
 
 - Is this a thing?
-
---------------
-
-[Table of Contents](/)

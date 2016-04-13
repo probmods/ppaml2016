@@ -58,7 +58,3 @@ viz.auto(boundedGeometric);
 ~~~~
 
 Here we link to the [next chapter](2-tour.html).
-
---------------
-
-[Table of Contents](/)

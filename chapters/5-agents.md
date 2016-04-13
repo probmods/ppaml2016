@@ -20,7 +20,3 @@ description: "The fifth chapter"
     - POMDPS
     - Inferring beliefs, preferences, and other properties from observed behavior
   - RSA
-
---------------
-
-[Table of Contents](/)

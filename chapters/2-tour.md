@@ -17,7 +17,3 @@ description: "The second chapter"
   - Logistic regression
   - Bayesian neural net
   - ...others?
-
---------------
-
-[Table of Contents](/)

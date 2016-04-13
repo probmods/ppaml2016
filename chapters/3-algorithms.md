@@ -14,7 +14,3 @@ description: "The third chapter"
     - HMC
   - Variational inference
   - Challenges: give models without Infer options and ask students to choose algorithms to make inference work.
-
---------------
-
-[Table of Contents](/)
