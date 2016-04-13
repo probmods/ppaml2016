@@ -1,8 +1,8 @@
 # Site settings
 
 title: PPAML Summer School 2016
-baseurl: ""
-url: "http://probmods.github.io/ppaml2016/"
+baseurl: "/ppaml2016"
+url: "http://probmods.github.io/ppaml2016"
 
 # Build settings
 markdown: kramdown
