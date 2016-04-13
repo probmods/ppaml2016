@@ -107,7 +107,7 @@ function format_refp(citation) {
   return textohtml(s);
 }
 
-$.get("/bibliography.bib", function (bibtext) {
+$.get("/ppaml2016/bibliography.bib", function (bibtext) {
     $(function () {
         var bibs = doParse(bibtext);
         $.each(
