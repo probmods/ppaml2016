@@ -95,6 +95,7 @@ ol li ol li {
 
 header, footer {
     padding: 30px;
+    color: #bbb;
 }
 
 header.site-header {
