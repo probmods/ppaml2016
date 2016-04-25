@@ -40,7 +40,7 @@ var sampleSentence = function() {
   return _sampleSentence(["^"]).slice(1,-1).join(" ");
 }
 
-hist(repeat(100, sampleSentence))
+viz.hist(repeat(100, sampleSentence))
 ~~~~
 
 ## HMMs
@@ -72,11 +72,13 @@ var arrayEq = function(a, b) {
   return (a.length == 0) ? true : (a[0] == b[0] && arrayEq(a.slice(1), b.slice(1)))
 }
 
-Enumerate(function() {
+var stateDist = Enumerate(function() {
   var r = hmm(3);
   factor(arrayEq(r.observations, trueObservations) ? 0 : -Infinity);
   return r.states;
 })
+
+viz.hist(stateDist)
 ~~~~
 
 ## PCFGs
@@ -121,11 +123,13 @@ var arrayEq = function(a, b) {
   return (a.length == 0) ? true : (a[0] == b[0] && arrayEq(a.slice(1), b.slice(1)))
 }
 
-Enumerate(function() {
+var nextWordDist = Enumerate(function() {
   var y = pcfg('start')
   factor(arrayEq(y.slice(0, 2), ['tall', 'John']) ? 0 : -Infinity) //yield starts with "tall John"
-  return y[2] ? y[2] : '' //distribution on next word?
+  return { nextWord: y[2] ? y[2] : '' } //distribution on next word?
 }, 300)
+
+viz.auto(nextWordDist)
 ~~~~
 
 ## Hierarchical models
@@ -353,10 +357,10 @@ var model = function() {
       xs,
       labels)
 
-  return sigmoid(8)
+  return sigmoid(4)
 }
 
-MH(model, 10000, 2000)
+viz.auto(MH(model, 10000))
 ~~~~
 
 ## Bayesian neural net
