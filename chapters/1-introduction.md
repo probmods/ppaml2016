@@ -15,6 +15,7 @@ description: "An introductiion"
   - Getting set up
     - Browser
     - Node
+    - rwebppl
   - Generative models
   - The WebPPL language
     - ERPs as reified distributions
