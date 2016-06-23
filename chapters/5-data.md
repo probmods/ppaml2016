@@ -17,3 +17,4 @@ description: "The sixth chapter"
     - logistic regression vs Bayesian neural net
     - a rich cognitive model vs regression
     - text analysis models (topic models, hmms, etc)
+  - Making predictions from data
