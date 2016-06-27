@@ -1,7 +1,7 @@
 ---
 layout: chapter
 title: Agents
-description: "The fifth chapter"
+description: "Modeling agent behaviors as probabilistic programs."
 ---
 
 - Resources

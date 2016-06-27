@@ -1,7 +1,7 @@
 ---
 layout: chapter
 title: Bayesian data analysis
-description: "The sixth chapter"
+description: "Analyzing data to gain insight into the processes that may have generated it and to make predictions on new data."
 ---
 
 - Resources

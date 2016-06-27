@@ -1,7 +1,7 @@
 ---
 layout: chapter
 title: Algorithms
-description: "The third chapter"
+description: "The various inference algorithms WebPPL provides and the classes of programs for which they are each best suited."
 ---
 
 - Content: Algorithms

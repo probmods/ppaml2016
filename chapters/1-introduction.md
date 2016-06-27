@@ -1,7 +1,7 @@
 ---
 layout: chapter
 title: Introduction
-description: "An introduction"
+description: "An introduction."
 ---
 
 - Resources
