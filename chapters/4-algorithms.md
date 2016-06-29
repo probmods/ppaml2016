@@ -8,7 +8,6 @@ custom_js:
 - /assets/js/paper-full.min.js
 custom_css:
 - /assets/css/draw.css
-- /assets/css/custom.css
 ---
 
 <!-- - Content: Algorithms
