@@ -90,3 +90,38 @@ Running this program, we can see that enumeration starts by growing a line from 
 In these situations, we can instead use one of WebPPL's many approximate, sampling-based inference algorithms.
 
 ## Rejection Sampling
+
+WebPPL provides a routine for basic [rejection sampling](http://docs.webppl.org/en/master/inference.html#rejection-sampling). Here's a simple program that uses rejection sampling to compute the uniform distribution of 2D points over the unit circle:
+
+~~~~
+
+var uniformCircle = function() {
+	var x = uniform(-1, 1)
+	var y = uniform(-1, 1)
+	condition(x*x + y*y < 1)
+	return {x: x, y: y}
+}
+
+viz.auto(Infer({method: 'rejection', samples: 1000}, uniformCircle))
+~~~~
+
+## Likelihood Weighting
+
+In cases where the evidence is unlikely (e.g. an observed Gaussian variable taking on a particular value), it is best to use `factor` instead of `condition`, which allows posterior computation through likelihood-weighted samples. Here's an example of inferring which of multiple Gaussians an observation was drawn from:
+
+~~~~
+var whichGaussian = function() {
+	var mus = [-10, 0, 5]
+	var sigmas = [4, 2, 4]
+
+	var obs = -2
+	var index = randomInteger(3)
+	factor(Gaussian({mu: mus[index], sigma: sigmas[index]}).score(obs))
+	return index
+}
+
+viz.auto(Infer({method: 'SMC', particles: 1000}, whichGaussian))
+~~~~
+
+## Particle Filtering
+
