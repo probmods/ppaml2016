@@ -14,6 +14,10 @@ description: "An introduction."
 - Content
   - Getting set up
     - Browser
+        - webppl.org for tinkering
+        - misc: random seed
+        - editor: keyboard shortcuts, working across boxes
+        - viz
     - Node
     - rwebppl
   - Generative models
