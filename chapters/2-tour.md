@@ -138,7 +138,7 @@ Bags of marbles
 
 ## Mixture models
 
-Basic LDA, From webppl `examples/`:
+Basic LDA, adapted from webppl `examples/`:
 
 ~~~~
 // Parameters
@@ -159,29 +159,16 @@ var docs = {
 };
 
 
-// Constants and helper functions
-
-var ones = function(n) {
-  return repeat(n, function() {return 1.0;});
-}
-
 // Model
+var makeWordDist = function() { dirichlet(ones([vocabulary.length,1])) };
+var makeTopicDist = function() { dirichlet(ones([_.size(topics),1])) };
 
-var makeWordDist = function() {
-  return dirichlet(ones(vocabulary.length));
-};
-
-var makeTopicDist = function() {
-  return dirichlet(ones(_.size(topics)));
-};
-
-var discreteFactor = function(vs, ps, v) {
-  var i = indexOf(v, vs);
-  factor(Math.log(ps[i]));
+var discreteFactor = function(vs, ps /* Vector */, v) {
+  var i = vs.indexOf(v);
+  factor(Math.log(ps.data[i]));
 }
 
 var model = function() {
-
   var wordDistForTopic = mapObject(makeWordDist, topics);
   var topicDistForDoc = mapObject(makeTopicDist, docs);
   var makeTopicForWord = function(docName, word) {
@@ -195,22 +182,24 @@ var model = function() {
   var topicsForDoc = mapObject(makeWordTopics, docs);
 
   mapObject(
-      function(docName, words) {
-        map2(
-            function(topic, word) {
-              discreteFactor(vocabulary, wordDistForTopic[topic], word);
-            },
-            topicsForDoc[docName],
-            words);
-      },
-      docs);
+    function(docName, words) {
+      map2(
+        function(topic, word) {
+          discreteFactor(vocabulary, wordDistForTopic[topic], word);
+        },
+        topicsForDoc[docName],
+        words);
+    },
+    docs);
 
-  // console.log(wordDistForTopic);
-
-  return wordDistForTopic
+  return mapObject(function(k,v) { return _.toArray(v.data) },
+                   wordDistForTopic)
 };
 
-MH(model, 10000)
+var samp = sample(MH(model, 10000));
+
+print("Topic 1:"); viz.bar(vocabulary, samp.topic1);
+print("Topic 2:"); viz.bar(vocabulary, samp.topic1);
 ~~~~
 
 Collapsed LDA, from webppl `examples/`:
