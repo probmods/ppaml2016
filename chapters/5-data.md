@@ -27,17 +27,6 @@ description: "Analyzing data to gain insight into the processes that may have ge
 Estimating Amazon hosting costs for a fictional video streaming company:
 
 ~~~~
-var transferCost = function(gb) {
-  var unitCost =
-      (gb <= 1 ? 0 :
-       (gb <= 10000 ? 0.09 :
-        (gb <= 40000 ? 0.085 : (gb <= 100000 ? 0.07 : 0.05))))
-  return unitCost * gb;
-}
-
-var requestsCost = function(n) { 0.004 * n / 10000}
-var storageCost = function(gb) { 0.03 * gb } // todo: flesh out
-
 var model = function() {
   var resources = [
     {name: 'a',
@@ -56,13 +45,20 @@ var model = function() {
   var storage =  sum(map(function(r) { r.size },               resources))
   var requests = sum(map(function(r) { r.requests },           resources))
   var transfer = sum(map(function(r) { r.requests * r.size  }, resources))
-  var cents = storageCost(storage) + requestsCost(requests) + transferCost(transfer);
 
-  // condition(resources[1].requests > 40000) // B goes viral
-  return cents / 100;
+  var costs = {
+    requests: 0.004 * (requests / 10000),
+    storage: 0.03 * storage,
+    transfer: transfer *
+      (transfer <= 1 ? 0 :
+       (transfer <= 10000 ? 0.09 :
+        (transfer <= 40000 ? 0.085 : (transfer <= 100000 ? 0.07 : 0.05))))
+  };
+  // /* B goes viral */ condition(resources[1].requests > 40000)
+  return sum(_.values(costs))/100
 }
 
 var dist = MH(model, 30000);
 print("Expected cost: $" + expectation(dist))
-viz.density(dist)
+viz.density(dist, {bounds: [300,500]})
 ~~~~
