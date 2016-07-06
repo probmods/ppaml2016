@@ -18,7 +18,7 @@ var T = {
   "complete":       [ 0,   0,        0.6,  0.2,       0.1,        0.1 ],
   "the":            [ 0,   0,        0,    0.6,       0.4,        0   ],
   "sandwich":       [ 0,   0,        0,    0,         0,          1   ],
-  "sentence":       [ 0,   0,        0,    0,         0,          1   ] 
+  "sentence":       [ 0,   0,        0,    0,         0,          1   ]
 };
 
 var transition = function(word) {
