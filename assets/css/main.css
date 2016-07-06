@@ -111,3 +111,16 @@ footer {
 footer a {
     color: #bbb
 }
+
+pre.highlight {
+    border: 1px solid black;
+    border-radius: 2px;
+    font-size: 13px;
+    line-height: 18px;
+    padding: 5px;
+}
+
+.wpedit button {
+    height: 26px !important;
+    padding: 0em 1em !important;
+}
