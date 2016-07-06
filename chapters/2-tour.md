@@ -127,7 +127,7 @@ var nextWordDist = Enumerate(function() {
   var y = pcfg('start')
   factor(arrayEq(y.slice(0, 2), ['tall', 'John']) ? 0 : -Infinity) //yield starts with "tall John"
   return { nextWord: y[2] ? y[2] : '' } //distribution on next word?
-}, 300)
+}, {maxExecutions: 300})
 
 viz.auto(nextWordDist)
 ~~~~

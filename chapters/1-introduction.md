@@ -51,8 +51,8 @@ var geometric = function(p) {
 };
 
 var boundedGeometric = Enumerate(
-  function(){ return geometric(0.5); }, 
-  20);
+  function(){ return geometric(0.5); },
+  {maxExecutions: 20});
 
 print('Histogram of (bounded) Geometric distribution');
 viz.auto(boundedGeometric);
