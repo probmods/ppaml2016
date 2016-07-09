@@ -538,5 +538,33 @@ drawLines(finalImage, finalLines);
 
 This program uses only a single `factor` at the end of `finalImgSampler`, rather than one per each line rendered as in the SMC version. The fact that MCMC supports such a pattern makes it well-suited for programs that invoke complicated, 'black-box' simulations in order to compute likelihoods. It also makes MCMC a good default go-to inference method for most programs.
 
+### Custom MH Proposals(?)
+
+Do we want this to be a thing?
+
+### Hamiltonian Monte Carlo
+
+When the input to a `factor` statement is a function of multiple variables, those variables become correlated in the posterior distribution. If the induced correlation is particularly strong, MCMC can sometimes become 'stuck,' generating many very similar samples which result in a poor approximation of the true posterior. Take this example below, where we use a Gaussian likelihood factor to encourage ten uniform random numbers to sum to the value 5:
+
+~~~~
+var bin = function(x) {
+  return Math.floor(x * 1000) / 1000;
+};
+
+var model = function() {
+  var xs = repeat(10, function() {
+    return uniform(0, 1);
+  });
+  var targetSum = xs.length / 2;
+  factor(Gaussian({mu: targetSum, sigma: 0.001}).score(sum(xs)));
+  return map(bin, xs);
+};
+
+var post = Infer({method: 'MCMC', samples: 5000}, model);
+repeat(10, function() { return sample(post); });
+~~~~
+
+Running this program produces some random samples from the computed posterior distribution over the list of ten numbers---you'll notice that they are all very similiar, despite there being many distinct ways for ten real numbers to sum to 5.
+
 
 ## Variational Inference
