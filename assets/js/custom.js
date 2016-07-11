@@ -10,3 +10,17 @@ function euclideanDistance(v1, v2){
   }
   return Math.sqrt(d);
 };
+
+
+// MCMC callbacks
+
+var MCMC_Callbacks = {
+
+	finalAccept: {
+		finish: function(trace) {
+			var ratio = (trace.info.accepted / trace.info.total);
+			console.log('Acceptance ratio: ' + ratio);
+		}
+	}
+	
+};

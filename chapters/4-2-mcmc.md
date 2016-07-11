@@ -185,20 +185,64 @@ var bin = function(x) {
   return Math.floor(x * 1000) / 1000;
 };
 
-var model = function() {
+var constrainedSumModel = function() {
   var xs = repeat(10, function() {
     return uniform(0, 1);
   });
   var targetSum = xs.length / 2;
-  factor(Gaussian({mu: targetSum, sigma: 0.001}).score(sum(xs)));
+  factor(Gaussian({mu: targetSum, sigma: 0.005}).score(sum(xs)));
   return map(bin, xs);
 };
 
-var post = Infer({method: 'MCMC', samples: 5000}, model);
-repeat(10, function() { return sample(post); });
+var post = Infer({
+	method: 'MCMC',
+	samples: 5000,
+	callbacks: [MCMC_Callbacks.finalAccept]
+}, constrainedSumModel);
+var samps = repeat(10, function() { return sample(post); });
+reduce(function(x, acc) {
+  return acc + x.toString() + '\n';
+}, '', samps);
 ~~~~
 
-Running this program produces some random samples from the computed posterior distribution over the list of ten numbers---you'll notice that they are all very similiar, despite there being many distinct ways for ten real numbers to sum to 5.
+Running this program produces some random samples from the computed posterior distribution over the list of ten numbers---you'll notice that they are all very similiar, despite there being many distinct ways for ten real numbers to sum to 5. This program also uses the `callbacks` option to `MCMC` to display the final acceptance ratio (i.e. the percentage of proposed samples that were accepted)--it should be around 1-2%, which is very inefficient.
+
+To deal with situations like this one, WebPPL provides an implementation of [Hamiltonian Monte Carlo](http://docs.webppl.org/en/master/inference.html#kernels), or HMC. HMC automatically computes the gradient of the posterior with respect to the random choices made by the program. It can then use the gradient information to make coordinated proposals to all the random choices, maintaining posterior correlations. Below, we apply HMC to `constrainedSumModel`:
+
+~~~~
+var bin = function(x) {
+  return Math.floor(x * 1000) / 1000;
+};
+
+var constrainedSumModel = function() {
+  var xs = repeat(10, function() {
+    return uniform(0, 1);
+  });
+  var targetSum = xs.length / 2;
+  factor(Gaussian({mu: targetSum, sigma: 0.005}).score(sum(xs)));
+  return map(bin, xs);
+};
+
+var post = Infer({
+	method: 'MCMC',
+	samples: 100,
+	callbacks: [MCMC_Callbacks.finalAccept],
+	kernel: {
+		HMC : { steps: 50, stepSize: 0.0025 }
+	}
+}, constrainedSumModel);
+var samps = repeat(10, function() { return sample(post); });
+reduce(function(x, acc) {
+  return acc + x.toString() + '\n';
+}, '', samps);
+~~~~
+
+The approximate posterior samples produced by this program are more varied, and the final acceptance rate is much higher.
+
+There are a couple of caveats to keep in mind when using HMC:
+
+ - Its parameters can be extremely sensitive. Try increasing the `stepSize` option to `0.004` and seeing how the output samples degenerate. 
+ - It is only applicable to continuous random choices, due to its gradient-based nature. You can still use HMC with models that include discrete choices, though: under the hood, this will alternate between HMC for the continuous choices and MH for the discrete choices.
 
 ## Exercises
 
