@@ -183,9 +183,10 @@ var post = Infer({
 var samps = repeat(10, function() {
   return sample(post);
 });
-reduce(function(x, acc) {
-	return acc + 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + x.toString() + '\n';
-}, '', samps);
+map(function(x) {
+  var numsRounded = map(function(xi) { xi.toFixed(2) }, x).join(' ');
+  return 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + numsRounded;
+}, samps).join('\n');
 ~~~~
 
 Try running this program. Notice the structure of the output posterior samples--the mean-field algorithm has essentially learned that to achieve a sum of 5 from ten numbers, it can make each number independently take a value as close as possible ot 0.5. This is not a particularly good approximation of the true posterior.
@@ -235,9 +236,10 @@ var post = Infer({
 var samps = repeat(10, function() {
   return sample(post);
 });
-reduce(function(x, acc) {
-	return acc + 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + x.toString() + '\n';
-}, '', samps);
+map(function(x) {
+  var numsRounded = map(function(xi) { xi.toFixed(2) }, x).join(' ');
+  return 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + numsRounded;
+}, samps).join('\n');
 ~~~~
 
 In the above program, we are introducing a few new features:
