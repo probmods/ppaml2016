@@ -89,7 +89,7 @@ viz.table(lineDist);
 
 Running this program, we can see that enumeration starts by growing a line from the bottom-right corner of the image, and then proceeds to methodically plot out every possible line length that could be generated. These are all fairly terrible at matching the target image, and there are billions more states like them that enumeration would have to wade through in order to find those few that have high probability.
 
-In these situations, we can instead use one of WebPPL's many approximate, sampling-based inference algorithms.
+In these situations, we can instead use one of WebPPL's many approximate inference algorithms.
 
 ## Chapter Contents
 

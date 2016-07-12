@@ -32,10 +32,10 @@ var genFrom2DGaussMixture = function(mus, sigmas, weights) {
   ];
 };
 
-var mus = [[100, 200], [200, 100], [200, 200]];
+var mus = [[100, 200], [200, 100], [200, 300]];
 var sigmas = [[20, 5], [10, 10], [5, 20]];
-var weights = [0.2, 0.5, 0.3];
-var nObservations = 50;
+var weights = [0.33, 0.33, 0.33];
+var nObservations = 100;
 var synthData = repeat(nObservations, function() {
   return genFrom2DGaussMixture(mus, sigmas, weights);
 });
@@ -63,18 +63,14 @@ var genFrom2DGaussMixture = function(mus, sigmas, weights) {
   ];
 };
 
-var mus = [[100, 200], [200, 100], [200, 200]];
+var mus = [[100, 200], [200, 100], [200, 300]];
 var sigmas = [[20, 5], [10, 10], [5, 20]];
-var weights = [0.2, 0.5, 0.3];
-var nObservations = 50;
+var weights = [0.33, 0.33, 0.33];
+var nObservations = 100;
 var synthData = repeat(nObservations, function() {
   return genFrom2DGaussMixture(mus, sigmas, weights);
 });
 ///
-
-var logsumexp = function(xs) {
-  return Math.log(sum(map(function(x) { return Math.exp(x); }, xs)));
-};
 
 var gaussMixtureObs = function(observations) {
   var mus = repeat(3, function() {
@@ -83,20 +79,12 @@ var gaussMixtureObs = function(observations) {
   var sigmas = repeat(3, function() {
     return [gamma(1, 10), gamma(1, 10)];
   });
-  var weights = dirichlet(Vector([1, 1, 1])).toFlatArray();
+  var weights = dirichlet(Vector([1, 1, 1]));
   
   map(function(obs) {
-    // Compute likelihood of observation by summing over all three gaussians
-    var xscores = mapIndexed(function(i, w) {
-      return Gaussian({mu: mus[i][0], sigma: sigmas[i][0]}).score(obs[0])
-             + Math.log(w);
-    }, weights);
-    var yscores = mapIndexed(function(i, w) {
-      return Gaussian({mu: mus[i][1], sigma: sigmas[i][1]}).score(obs[1])
-             + Math.log(w);
-    }, weights);
-    factor(logsumexp(xscores));
-    factor(logsumexp(yscores));
+    var i = discrete(weights);
+    factor(Gaussian({mu: mus[i][0], sigma: sigmas[i][0]}).score(obs[0]));
+    factor(Gaussian({mu: mus[i][1], sigma: sigmas[i][1]}).score(obs[1]));
   }, observations);
   
   return {
@@ -106,7 +94,7 @@ var gaussMixtureObs = function(observations) {
   };
 };
 
-var post = Infer({method: 'MCMC', samples: 1000, onlyMAP: true}, function() {
+var post = Infer({method: 'MCMC', samples: 5000, onlyMAP: true}, function() {
   return gaussMixtureObs(synthData);
 });
 var params = sample(post);
