@@ -199,7 +199,7 @@ var model = function() {
 var samp = sample(MH(model, 10000));
 
 print("Topic 1:"); viz.bar(vocabulary, samp.topic1);
-print("Topic 2:"); viz.bar(vocabulary, samp.topic1);
+print("Topic 2:"); viz.bar(vocabulary, samp.topic2);
 ~~~~
 
 Collapsed LDA, from webppl `examples/`:
