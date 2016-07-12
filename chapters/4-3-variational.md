@@ -52,15 +52,13 @@ Here's a more complicated example of using mean-field inference for a simple Lat
 
 ~~~~
 var nTopics = 2;
-
-var vocabulary = ['bear', 'wolf', 'python', 'prolog'];
-
+var vocabulary = ['zebra', 'wolf', 'html', 'css'];
 var docs = {
-  'doc1': 'bear wolf bear wolf bear wolf python wolf bear wolf'.split(' '),
-  'doc2': 'python prolog python prolog python prolog python prolog python prolog'.split(' '),
-  'doc3': 'bear wolf bear wolf bear wolf bear wolf bear wolf'.split(' '),
-  'doc4': 'python prolog python prolog python prolog python prolog python prolog'.split(' '),
-  'doc5': 'bear wolf bear python bear wolf bear wolf bear wolf'.split(' ')
+  'doc1': 'zebra wolf zebra wolf zebra wolf html wolf zebra wolf'.split(' '),
+  'doc2': 'html css html css html css html css html css'.split(' '),
+  'doc3': 'zebra wolf zebra wolf zebra wolf zebra wolf zebra wolf'.split(' '),
+  'doc4': 'html css html css html css html css html css'.split(' '),
+  'doc5': 'zebra wolf zebra html zebra wolf zebra wolf zebra wolf'.split(' ')
 };
 
 var makeWordDist = function() { dirichlet(ones([vocabulary.length,1])) };
@@ -106,17 +104,14 @@ We can make LDA better suited for variational inference by explicitly integratin
 ~~~~
 ///fold:
 var nTopics = 2;
-
-var vocabulary = ['bear', 'wolf', 'python', 'prolog'];
-
+var vocabulary = ['zebra', 'wolf', 'html', 'css'];
 var docs = {
-  'doc1': 'bear wolf bear wolf bear wolf python wolf bear wolf'.split(' '),
-  'doc2': 'python prolog python prolog python prolog python prolog python prolog'.split(' '),
-  'doc3': 'bear wolf bear wolf bear wolf bear wolf bear wolf'.split(' '),
-  'doc4': 'python prolog python prolog python prolog python prolog python prolog'.split(' '),
-  'doc5': 'bear wolf bear python bear wolf bear wolf bear wolf'.split(' ')
+  'doc1': 'zebra wolf zebra wolf zebra wolf html wolf zebra wolf'.split(' '),
+  'doc2': 'html css html css html css html css html css'.split(' '),
+  'doc3': 'zebra wolf zebra wolf zebra wolf zebra wolf zebra wolf'.split(' '),
+  'doc4': 'html css html css html css html css html css'.split(' '),
+  'doc5': 'zebra wolf zebra html zebra wolf zebra wolf zebra wolf'.split(' ')
 };
-
 var makeWordDist = function() { dirichlet(ones([vocabulary.length,1])) };
 var makeTopicDist = function() { dirichlet(ones([nTopics,1])) };
 ///
