@@ -190,7 +190,7 @@ var post = Infer({
 }, constrainedSumModel);
 var samps = repeat(10, function() { return sample(post); });
 reduce(function(x, acc) {
-  return acc + x.toString() + '\n';
+	return acc + 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + x.toString() + '\n';
 }, '', samps);
 ~~~~
 
@@ -224,7 +224,7 @@ var post = Infer({
 }, constrainedSumModel);
 var samps = repeat(10, function() { return sample(post); });
 reduce(function(x, acc) {
-  return acc + x.toString() + '\n';
+	return acc + 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + x.toString() + '\n';
 }, '', samps);
 ~~~~
 
