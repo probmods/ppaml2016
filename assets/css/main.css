@@ -124,3 +124,8 @@ pre.highlight {
     height: 26px !important;
     padding: 0em 1em !important;
 }
+
+/* match direct descendents of .result that have no class declared */
+.result > div:not([class]) {
+    border: 0.1px solid transparent;
+}
