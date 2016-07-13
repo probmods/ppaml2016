@@ -347,9 +347,10 @@ var post = SampleGuide(constrainedSum, {
 var samps = repeat(10, function() {
   return sample(post);
 });
-reduce(function(x, acc) {
-	return acc + 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + x.toString() + '\n';
-}, '', samps);
+map(function(x) {
+  var numsRounded = map(function(xi) { xi.toFixed(2) }, x).join(' ');
+  return 'sum: ' + sum(x).toFixed(3) + ' | nums: ' + numsRounded;
+}, samps).join('\n');
 ~~~~
 
 One motivation for this division: if your program makes predictions from data (as the next chapter covers), then you can spend time up-front optimizing parameters for an approximate posterior that work well for many possible input data. Then, when presented with new data, all that's required is to quickly generate some samples using the pre-optimized parameters. This paradigm is sometimes called *amortized inference*.
