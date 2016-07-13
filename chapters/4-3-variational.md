@@ -393,7 +393,10 @@ var post = Infer({
 sample(post);
 ~~~~
 
-Try modifying this program to integrate out the `discrete` choice and improve performance. Hint: you may find the `logsumexp` function provided below to be helpful.
+Try modifying this program to integrate out the `discrete` choice and improve performance. Some hints:
+
+ - The return value of a `dirichlet` random choice is a [Tensor](http://docs.webppl.org/en/master/tensors.html) object. You can access element `i` of a tensor `x` by calling `T.get(x, i)`.
+ - You may find the `logsumexp` function provided below to be helpful.
 
 ~~~~
 ///fold:
