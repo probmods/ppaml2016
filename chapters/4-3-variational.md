@@ -339,10 +339,12 @@ var constrainedSum = function() {
 };
 ///
 
-var post = SampleGuide(constrainedSum, {
-	samples: 100,
-	params: wpEditor.get('constrainedSumParams')
-});
+var post = Infer({
+  method: 'forward',
+  samples: 100,
+  guide: true,
+  params: wpEditor.get('constrainedSumParams')
+}, constrainedSum);
 
 var samps = repeat(10, function() {
   return sample(post);
