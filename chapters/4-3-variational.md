@@ -9,7 +9,7 @@ custom_css:
 - /assets/css/draw.css
 ---
 
-The previous parts of this chapter focused on Monte Carlo methods for approximate inference: algorithms that generate a (large) collection of samples to represent the posterior distribution. This is a *non-parametric* representation of the posterior. On the other side of the same coin, we have *parametric* representations--that is, we can try to design and fit a paramametrized density function to approximate the posterior distribution. 
+The previous parts of this chapter focused on Monte Carlo methods for approximate inference: algorithms that generate a (large) collection of samples to represent the posterior distribution. This is a *non-parametric* representation of the posterior. On the other side of the same coin, we have *parametric* representations--that is, we can try to design and fit a parameterized density function to approximate the posterior distribution. 
 
 This is the approach taken by the family of [variational inference](http://docs.webppl.org/en/master/inference.html#optimization) methods, and WebPPL provides a version of these algorithms via the `optimize` inference option (the name 'optimize' comes from the fact that we're optimizing the parameters of a density function such it is as close as possible to the true posterior).
 Below, we use `optimize` to fit the hyperparameters of a Gaussian distribution from data:
