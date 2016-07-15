@@ -14,9 +14,9 @@ description: "An introduction."
 - Content
   - Getting set up
     - Browser
-        - webppl.org for tinkering
-        - misc: random seed
-        - editor: keyboard shortcuts, working across boxes
+        - webppl.org for tinkering (share button for reproducibility?)
+        - misc: setting / recovering random seed, Chrome pauses webppl execution if you go to a different tab :/
+        - editor: keyboard shortcuts (run model, comment, fold), working across boxes
         - viz
     - Node
     - rwebppl
