@@ -149,9 +149,27 @@ drawLines(finalImage, finalLines);
 
 This program uses only a single `factor` at the end of `finalImgSampler`, rather than one per each line rendered as in the SMC version. The fact that MCMC supports such a pattern makes it well-suited for programs that invoke complicated, 'black-box' simulations in order to compute likelihoods. It also makes MCMC a good default go-to inference method for most programs.
 
-### Custom MH Proposals(?)
+### Custom MH Proposals
 
-Do we want this to be a thing?
+By default, WebPPL's MH algorithm proposes a change to a random choice by resampling from its prior. While this is always correct, it isn't always the most efficient proposal strategy. In practice, it's often advantageous to make a proposal based on the current value of the random choice: for example, a small perturbation of the current value is more likely to be accepted than an independently resampled value.
+
+WebPPL supports these sorts of custom proposals via an option `driftKernel` that can be provided to any call to `sample`. Below, we show an example proposal for discrete random choices that forces MH to choose a different value than the current one (by setting the probability of the current value to zero):
+
+~~~~
+var model = function() {
+  var x = sample(Discrete({ps: [0.25, 0.25, 0.25, 0.25]}, {
+    driftKernel: function(currVal) {
+      var newps = ps.slice(0, currVal).concat([0]).concat(ps.slice(currVal+1));
+      return Discrete({ps: newps});
+    }
+  }));
+  return x;
+}
+
+Infer({method: 'MCMC', samples: 100}, model);
+~~~~
+
+You might try using this strategy with the Gaussian mixture model program above to see how it improves efficiency.
 
 ### Hamiltonian Monte Carlo
 
