@@ -430,4 +430,101 @@ var post = Infer({
 viz.auto(post);
 ~~~~ -->
 
+<!-- 
+### 2. Constraint-based Layout
+
+I don't really like this example; it devolves into a really tedious and difficult parameter tuning exercise.
+
+~~~~
+///fold:
+var drawCircles = function(canvas, positions){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  canvas.circle(T.get(next, 0), T.get(next, 1), 5, 'black', 'blue');
+  drawCircles(canvas, positions.slice(1));
+};
+
+var dot = function(v1, v2) {
+  return T.get(T.dot(T.transpose(v1), v2), 0);
+}
+
+var norm = function(v) {
+  return Math.sqrt(dot(v, v));
+};
+
+var normalize = function(v) {
+  return T.div(v, norm(v));
+};
+
+var distance = function(p1, p2) {
+  return norm(T.sub(p2, p1));
+};
+
+var collinearity = function(p1, p2, p3) {
+  var v1 = normalize(T.sub(p1, p2));
+  var v2 = normalize(T.sub(p3, p2));
+  var d = dot(v1, v2); // between [-1, 1]
+  // perfect collinearity is d === -1
+  return 0.5 * (-d + 1);
+};
+///
+
+var nPoints = 8;
+var targetDist = 50;
+
+var model = function() {
+  // Sample point positions
+  var positions = repeat(nPoints, function() {
+    return sample(DiagCovGaussian({mu: Vector([200, 200]),
+                                   sigma: Vector([100, 100])}));
+  });
+  
+  // Constraints
+  mapIndexed(function(i, p1) {
+    // Constraint 1: distance between subsequent points
+    var p2 = positions[(i+1) % positions.length];
+    var d = distance(p1, p2);
+    factor(Gaussian({mu: targetDist, sigma: 2}).score(d));
+    
+    // Constraint 2: collinearity of consecutive triples
+    // 'collinearity' returns a score between 0 and 1
+    var p3 = positions[(i+2) % positions.length];
+    var cl = collinearity(p1, p2, p3);
+    factor(Gaussian({mu: 1, sigma: 0.02}).score(cl));
+  }, positions);
+  
+  return positions;
+};
+
+// var post = Infer({method: 'MCMC', samples: 10000}, model);
+var post = Infer({
+  method: 'MCMC',
+  kernel: { HMConly: { stepSize: 0.033, steps: 30 } },
+  samples: 1000,
+  callbacks: [MCMC_Callbacks.finalAccept]
+}, model);
+
+repeat(10, function() {
+  var samp = sample(post);
+  var canvas = Draw(400, 400, true);
+  drawCircles(canvas, samp);
+});
+
+// mapIndexed(function(i, p1) {
+//   display('-----------------')
+//   // Constraint 1: distance between subsequent points
+//   var p2 = samp[(i+1) % samp.length];
+//   var d = distance(p1, p2);
+//   display(d);
+
+//   // Constraint 2: collinearity of consecutive triples
+//   // 'collinearity' returns a score between 0 and 1
+//   var p3 = samp[(i+2) % samp.length];
+//   var cl = collinearity(p1, p2, p3);
+//   display(cl);
+// }, samp);
+
+
+~~~~ -->
+
 [Next: Variational Inference]({{ "/chapters/4-3-variational.html" | prepend: site.baseurl }})
