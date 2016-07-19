@@ -332,10 +332,102 @@ You can also rejuvenate with HMC, by specifying HMC as the `rejuvKernel` option.
 
 ## Exercises
 
-TODO; some ideas:
+### 1. Sampling Implicit Curves
 
- - Something with custom proposals?
- - Something with rejuvenation?
- - Something that exhibits multimodality?
+The code box below uses rejection sampling to sample points along the boundary of an implicit curve defined by the `curve` function:
+
+~~~~
+var curve = function(x, y) {
+  var x2 = x*x;
+  var term1 = y - Math.pow(x2, 1/3);
+  return x2 + term1*term1 - 1;
+};
+var xbounds = [-1, 1];
+var ybounds = [-1, 1.6];
+
+var xmu = 0.5 * (xbounds[0] + xbounds[1]);
+var ymu = 0.5 * (ybounds[0] + ybounds[1]);
+var xsigma = 0.5 * (xbounds[1] - xbounds[0]);
+var ysigma = 0.5 * (ybounds[1] - ybounds[0]);
+
+var model = function() {
+  var x = gaussian(xmu, xsigma);
+  var y = gaussian(ymu, ysigma);
+  var c_xy = curve(x, y);
+  condition(Math.abs(c_xy) < 0.01);
+  return {x: x, y: y};
+};
+
+var post = Infer({method: 'rejection', samples: 1000}, model);
+viz.auto(post);
+~~~~
+
+Try using MCMC instead of rejection sampling--you'll notice that it doesn't fare as well. Why does this happen, and how can you change the model (or the inference algorithm) to make MCMC perform better? There may be multiple ways to approach this problem.
+
+Hints:
+
+ - The documentation on WebPPL's primitive [Distributions](http://docs.webppl.org/en/master/distributions.html) may be helpful. Be aware that some distributions operate on [Vectors](http://docs.webppl.org/en/master/tensors.html), rather than arrays.
+
+<!-- ~~~~
+// Solution 1: Using multivariate gaussian
+var curve = function(x, y) {
+  var x2 = x*x;
+  var term1 = y - Math.pow(x2, 1/3);
+  return x2 + term1*term1 - 1;
+};
+var xbounds = [-1, 1];
+var ybounds = [-1, 1.6];
+
+var xmu = 0.5 * (xbounds[0] + xbounds[1]);
+var ymu = 0.5 * (ybounds[0] + ybounds[1]);
+var xsigma = 0.5 * (xbounds[1] - xbounds[0]);
+var ysigma = 0.5 * (ybounds[1] - ybounds[0]);
+
+var mu = Vector([xmu, ymu]);
+var sigma = Vector([xsigma, ysigma]);
+
+var model = function() {
+  var xy = sample(DiagCovGaussian({mu: mu, sigma: sigma}));
+  var x = T.get(xy, 0);
+  var y = T.get(xy, 1);
+  var c_xy = curve(x, y);
+  condition(Math.abs(c_xy) < 0.01);
+  return {x: x, y: y};
+};
+
+var post = Infer({method: 'MCMC', samples: 30000}, model);
+viz.auto(post);
+~~~~
+
+~~~~
+// Solution 2: Using HMC
+var curve = function(x, y) {
+  var x2 = x*x;
+  var term1 = y - Math.pow(x2, 1/3);
+  return x2 + term1*term1 - 1;
+};
+var xbounds = [-1, 1];
+var ybounds = [-1, 1.6];
+
+var xmu = 0.5 * (xbounds[0] + xbounds[1]);
+var ymu = 0.5 * (ybounds[0] + ybounds[1]);
+var xsigma = 0.5 * (xbounds[1] - xbounds[0]);
+var ysigma = 0.5 * (ybounds[1] - ybounds[0]);
+
+var model = function() {
+  var x = gaussian(xmu, xsigma);
+  var y = gaussian(ymu, ysigma);
+  var c_xy = curve(x, y);
+  condition(Math.abs(c_xy) < 0.01);
+  return {x: x, y: y};
+};
+
+var post = Infer({
+  method: 'MCMC',
+  kernel: { HMC: { stepSize: 0.1, steps: 10 } },
+  samples: 10000
+}, model);
+viz.auto(post);
+~~~~ -->
 
 [Next: Variational Inference]({{ "/chapters/4-3-variational.html" | prepend: site.baseurl }})
