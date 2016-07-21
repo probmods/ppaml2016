@@ -6,6 +6,45 @@ description: "Analyzing data to gain insight into the processes that may have ge
 
 # Bayesian data analysis
 
+~~~~
+var sampleGroup = function() { return flip(0.5) ? "bonafide" : "accidental" }
+
+var model = function() {
+  var bonafideLogTime = gaussian(3,3);
+  var accidentalLogTime = uniform(0, bonafideLogTime);
+  var sigma = uniform(0, 5);
+
+  var personAssignments = repeat(n_people, sampleGroup)
+
+  var hitRates = {
+    red: uniform(0,1),
+    blue: uniform(0,1)
+  };
+
+  foreach(_.range(0, n_people), function(person_id) {
+      var personData = _.pluck(data, "id", person_id);
+
+      var pAssignment = personAssignments[person_id];
+      var meanLogTime = (pAssignment == "bonafide") ? bonafideLogTime : accidentalLogTime;
+      
+      factor(Gaussian({mu: meanLogTime, sigma: sigma}).score(Math.log(personData.time)))
+
+      (pAssignment == "bonafide") ?
+        factor(Bernoulli({p: hitRates[personData.condition]}).score(personData.converted == 1) ) :
+        null
+  })
+
+  return {
+    bonafideLogTime : bonafideLogTime,
+    accidentalLogTime : accidentalLogTime,
+    blue_hitRate : hitRates.blue,
+    red_hitRate : hitRates.red
+  }
+
+}
+
+~~~~
+
 - Resources
   - This is a shortened version of MH's BDA course.
   - http://forestdb.org/models/bayesian-data-analysis.html
