@@ -98,5 +98,3 @@ In these situations, we can instead use one of WebPPL's many approximate inferen
 [Markov Chain Monte Carlo]({{ "/chapters/4-2-mcmc.html" | prepend: site.baseurl }})
 
 [Variational Inference]({{ "/chapters/4-3-variational.html" | prepend: site.baseurl }})
-
-[Additional Exercises]({{ "/chapters/4-4-exercises.html" | prepend: site.baseurl }})

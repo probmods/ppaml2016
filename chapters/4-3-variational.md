@@ -428,6 +428,7 @@ sample(post);
 ~~~~
 
 <!-- ~~~~
+// Solution
 ///fold:
 var mus = [-1.2, 0.5, 3.2];
 var sigmas = [0.5, 1.2, 0.3];
@@ -468,4 +469,366 @@ var post = Infer({
 sample(post);
 ~~~~ -->
 
-[Next: Additional Exercises]({{ "/chapters/4-4-exercises.html" | prepend: site.baseurl }})
+### 2. Amortized Variational Trilateration
+
+[Trilateration](https://en.wikipedia.org/wiki/Trilateration), or the process of determining an object's location via distance measurements to three known positions, is a widely-used localization technique: GPS systems trilaterate their position via estimating distances to GPS satellites, and mobile robots often use distances to known landmarks to estimate their positions. There is a closed-form algebraic solution to the problem when distance measurements are exact, but unfortunately, real-world measurements suffer from various sources of noise and uncertainty. In this setting, the problem becomes much harder ([NP-complete](http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6012539), to be precise).
+
+Let's pose trilateration as an inference problem. Below, we show some code that, given three fixed landmark locations, produces distance measurements from them to a random location. We assume that the distance measurements are subject to Gaussian noise. The output of the code below visualizes each distance measurements as a circle around its respective landmark. Run the code a few times to get a feel for how these measurements can look.
+
+~~~~
+///fold:
+var drawPoints = function(canvas, positions, radius, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPoints(canvas, positions.slice(1), radius, strokeColor);
+};
+
+var drawPointsMultiRadius = function(canvas, positions, radii, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  var radius = radii[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPointsMultiRadius(canvas, positions.slice(1), radii.slice(1), strokeColor);
+};
+
+var drawStationDists = function(canvas, stations, distances) {
+  drawPoints(canvas, stations, 5, 'black');
+  drawPointsMultiRadius(canvas, stations, distances, 'red');
+}
+
+var distance = function(p1, p2) {
+  var xdiff = p1[0] - p2[0];
+  var ydiff = p1[1] - p2[1];
+  return Math.sqrt(xdiff*xdiff + ydiff*ydiff);
+};
+///
+
+var stations = [
+  [100, 150],
+  [200, 250],
+  [250, 100]
+];
+var sensorNoise = 10;
+
+var locationPrior = Gaussian({mu: 200, sigma: 50});
+
+var genDistObservations = function() {
+  var loc = [sample(locationPrior), sample(locationPrior)]; 
+  return map(function(station) {
+    // Generate noisy observation
+    var trueDist = distance(loc, station);
+    return gaussian(trueDist, sensorNoise);
+  }, stations);
+};
+
+var dists = genDistObservations();
+var canvas = Draw(400, 400, true);
+drawStationDists(canvas, stations, dists);
+wpEditor.put('dists', dists);
+~~~~
+
+Next, using the distance measurements from the above code, we'll use mean-field variational inference to infer high-probability locations that might have produced those measurements:
+
+~~~~
+///fold:
+var drawPoints = function(canvas, positions, radius, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPoints(canvas, positions.slice(1), radius, strokeColor);
+};
+
+var drawPointsMultiRadius = function(canvas, positions, radii, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  var radius = radii[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPointsMultiRadius(canvas, positions.slice(1), radii.slice(1), strokeColor);
+};
+
+var drawStationDists = function(canvas, stations, distances) {
+  drawPoints(canvas, stations, 5, 'black');
+  drawPointsMultiRadius(canvas, stations, distances, 'red');
+}
+
+var distance = function(p1, p2) {
+  var xdiff = p1[0] - p2[0];
+  var ydiff = p1[1] - p2[1];
+  return Math.sqrt(xdiff*xdiff + ydiff*ydiff);
+};
+
+var stations = [
+  [100, 150],
+  [200, 250],
+  [250, 100]
+];
+var sensorNoise = 10;
+
+var locationPrior = Gaussian({mu: 200, sigma: 50});
+///
+
+var trilaterate = function(obsDists) {
+  var loc = [sample(locationPrior), sample(locationPrior)];
+  mapIndexed(function(i, obsDist) {
+    var station = stations[i];
+    var dist = distance(loc, station);
+    factor(Gaussian({mu: dist, sigma: sensorNoise}).score(obsDist));
+  }, obsDists);
+  return loc;
+};
+
+var obsDists = wpEditor.get('dists');
+var post = Infer({
+  method: 'optimize',
+  optMethod: 'adam',
+  steps: 5000,
+  samples: 100
+}, function() {
+  return trilaterate(obsDists);
+});
+
+var samps = repeat(100, function() { sample(post); });
+var canvas = Draw(400, 400, true);
+drawStationDists(canvas, stations, obsDists);
+drawPoints(canvas, samps, 2, 'blue');
+~~~~
+
+This is all well and good, but it's unfortunate that we have to re-run optimization for every new set of measurements we want to process. In this exercise, you'll write a custom guide distribution for this program (like in the `constrainedSum` example from earlier) so that it can be optimized once and then run on any distance measurements to quickly produce posterior samples.
+
+More specifically, your task is to fill in the `guidedSampleLocationPrior` function below:
+
+~~~~
+///fold:
+var drawPoints = function(canvas, positions, radius, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPoints(canvas, positions.slice(1), radius, strokeColor);
+};
+
+var drawPointsMultiRadius = function(canvas, positions, radii, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  var radius = radii[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPointsMultiRadius(canvas, positions.slice(1), radii.slice(1), strokeColor);
+};
+
+var drawStationDists = function(canvas, stations, distances) {
+  drawPoints(canvas, stations, 5, 'black');
+  drawPointsMultiRadius(canvas, stations, distances, 'red');
+}
+
+var distance = function(p1, p2) {
+  var xdiff = p1[0] - p2[0];
+  var ydiff = p1[1] - p2[1];
+  return Math.sqrt(xdiff*xdiff + ydiff*ydiff);
+};
+
+var stations = [
+  [100, 150],
+  [200, 250],
+  [250, 100]
+];
+var sensorNoise = 10;
+
+var locationPrior = Gaussian({mu: 200, sigma: 50});
+
+var genDistObservations = function() {
+  var loc = [sample(locationPrior), sample(locationPrior)]; 
+  return map(function(station) {
+    // Generate noisy observation
+    var trueDist = distance(loc, station);
+    return gaussian(trueDist, sensorNoise);
+  }, stations);
+};
+///
+
+// Construct a guide distribution for the location prior
+var guidedSampleLocationPrior = function(obsDists) {
+  return sample(locationPrior, {
+    // Fill this in!
+    // guide: ???
+  });
+};
+
+// Allow omission of obsDists, in which case we sample random ones.
+// This allows training of amortized model that will work for different
+//    input obsDists.
+var trilaterate = function(optionalObsDists) {
+  var obsDists = optionalObsDists ||
+                 Infer({method: 'forward'}, genDistObservations).sample();
+  var loc = [guidedSampleLocationPrior(obsDists),
+             guidedSampleLocationPrior(obsDists)];
+  mapIndexed(function(i, obsDist) {
+    var station = stations[i];
+    var dist = distance(loc, station);
+    factor(Gaussian({mu: dist, sigma: sensorNoise}).score(obsDist));
+  }, obsDists);
+  return loc;
+};
+
+var model = function() {
+  return trilaterate(globalStore.obsDists);
+};
+
+// Optimize parameters over multiple random observations
+globalStore.obsDists = undefined;
+
+// For more complex problems like this one, it can be helpful to split
+//    optimization into multiple phases, where the step size decreases
+//    in later phases to make more fine-scale changes to the parameters.
+var params_ = Optimize(model, {
+ optMethod: { adam: { stepSize: 0.5 } },
+ estimator: { ELBO: { samples: 20 } },
+ steps: 400
+});
+var params = Optimize(model, {
+ params: params_,
+ optMethod: { adam: { stepSize: 0.1 } },
+ estimator: { ELBO: { samples: 20 } },
+ steps: 1000
+});
+wpEditor.put('params', params);
+~~~~
+
+Once you've filled that in and run optimization, copy the new code you added into the code box below, which will generate samples using the optimized parameters:
+
+~~~~
+///fold:
+var drawPoints = function(canvas, positions, radius, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPoints(canvas, positions.slice(1), radius, strokeColor);
+};
+
+var drawPointsMultiRadius = function(canvas, positions, radii, strokeColor){
+  if (positions.length == 0) { return []; }
+  var next = positions[0];
+  var radius = radii[0];
+  canvas.circle(next[0], next[1], radius, strokeColor, "rgba(0, 0, 0, 0)");
+  drawPointsMultiRadius(canvas, positions.slice(1), radii.slice(1), strokeColor);
+};
+
+var drawStationDists = function(canvas, stations, distances) {
+  drawPoints(canvas, stations, 5, 'black');
+  drawPointsMultiRadius(canvas, stations, distances, 'red');
+}
+
+var distance = function(p1, p2) {
+  var xdiff = p1[0] - p2[0];
+  var ydiff = p1[1] - p2[1];
+  return Math.sqrt(xdiff*xdiff + ydiff*ydiff);
+};
+
+var stations = [
+  [100, 150],
+  [200, 250],
+  [250, 100]
+];
+var sensorNoise = 10;
+
+var locationPrior = Gaussian({mu: 200, sigma: 50});
+
+var genDistObservations = function() {
+  var loc = [sample(locationPrior), sample(locationPrior)]; 
+  return map(function(station) {
+    // Generate noisy observation
+    var trueDist = distance(loc, station);
+    return gaussian(trueDist, sensorNoise);
+  }, stations);
+};
+///
+
+// Copy and paste your version of 'guidedSampleLocationPrior,' as well as any
+//    other helper functions / data you addded.
+var guidedSampleLocationPrior = function(obsDists) {
+  return sample(locationPrior, {
+    // Fill this in!
+    // guide: ???
+  });
+};
+
+// Allow omission of obsDists, in which case we sample random ones.
+// This allows training of amortized model that will work for different
+//    input obsDists.
+var trilaterate = function(optionalObsDists) {
+  var obsDists = optionalObsDists || genDistObservations();
+  var loc = [guidedSampleLocationPrior(obsDists),
+             guidedSampleLocationPrior(obsDists)];
+  mapIndexed(function(i, obsDist) {
+    var station = stations[i];
+    var dist = distance(loc, station);
+    factor(Gaussian({mu: dist, sigma: sensorNoise}).score(obsDist));
+  }, obsDists);
+  return loc;
+};
+
+var model = function() {
+  return trilaterate(globalStore.obsDists);
+};
+
+// Sample from posterior conditioned on a particular observation
+globalStore.obsDists = genDistObservations();
+var post = Infer({
+  method: 'forward',
+  guide: true,
+  params: wpEditor.get('params'),
+  samples: 100,
+}, model);
+
+var samps = repeat(100, function() { sample(post); });
+var canvas = Draw(400, 400, true);
+drawStationDists(canvas, stations, globalStore.obsDists);
+drawPoints(canvas, samps, 2, 'blue');
+~~~~
+
+One possible strategy to tackle this problem is to structure your guide computation like a simple neural network.
+
+**Extra challenge:** Try making the guide deal with variability in the location of the stations, as well as variability in the distance measurements.
+
+<!-- ~~~~
+// Solution using neural networks
+var prm = function() { return scalarParam(0, 1); };
+
+var linear = function(input, nOut) {
+  return repeat(nOut, function() {
+    var bias = prm();
+    return sum(map(function(x) {
+      return prm() * x;
+    }, input));
+  });
+};
+
+var activation = function(input) {
+  return map(function(x) {
+    return Math.sigmoid(x);
+  }, input);
+};
+
+var predictGaussParams = function(input, nHidden) {
+  var hidden = activation(linear(input, nHidden));
+  var hidden2 = activation(linear(hidden, nHidden));
+  var out = linear(hidden2, 2);
+  return {
+    mu: out[0],
+    sigma: Math.exp(out[1])
+  };
+};
+
+var normalizeDists = function(dists) {
+  return map(function(d) {
+    return d/200;
+  }, dists);
+};
+
+// Construct a guide distribution for the location prior
+var guidedSampleLocationPrior = function(obsDists) {
+  var gparams = predictGaussParams(normalizeDists(obsDists), 5);
+  return sample(locationPrior, {
+    guide: Gaussian({mu: gparams.mu, sigma: gparams.sigma})
+  });
+};
+~~~~ -->
