@@ -134,7 +134,10 @@ Advantages:
 
 ## Image denoising
 
-## Variational autoencoder 
+## Variational autoencoder
+
+[link]({{ "/chapters/5-2-6-vae.html" | prepend: site.baseurl }})
+
 
 ## Exercises
 
