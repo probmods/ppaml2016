@@ -26,7 +26,7 @@ var model = function() {
 
       var pAssignment = personAssignments[person_id];
       var meanLogTime = (pAssignment == "bonafide") ? bonafideLogTime : accidentalLogTime;
-      
+
       factor(Gaussian({mu: meanLogTime, sigma: sigma}).score(Math.log(personData.time)))
 
       (pAssignment == "bonafide") ?
@@ -48,10 +48,10 @@ var model = function() {
 - Resources
   - This is a shortened version of MH's BDA course.
   - http://forestdb.org/models/bayesian-data-analysis.html
-    - In contrast to this page, we might want 2-3 real datasets
+    -In contrast to this page, we might want 2-3 real datasets
 - Content
   - *MH to revise content*
-  - Input/output of data
+  -Input/output of data
   - Occam's razor
   - Various models useful for BDA
   - Use BDA to compare two of the models shown earlier on a dataset
@@ -62,6 +62,31 @@ var model = function() {
 
 
 # Making predictions from data
+
+## Censored linear regression with multiple noise sources
+
+We give people a scale and ask them to weigh themselves and report the numbers. There are some realistic complications:
+
+1. The scale has a maximum limit (making this a so-called censored model)
+1. The scale is noisy
+1. Peoples' weights fluctuate
+1. There's a systematic bias for people to under-report their weights
+
+What we really care about is just estimates of peoples' true weight, don't care that much about interpreting parameters (though #4 is kind of interesting)
+
+note that this would be hard to do 
+
+## Ordinal regression with endpoint aversion
+
+One advantage of PPLs is that they let you express your prior knowledge to make predictions *at all* (this example would be really hard to do in, say, R).
+
+## Inferring regular expressions
+
+(do both selection and replacement)
+
+Point of this section is that getting posterior probs. exactly right might not be so important because you're just gonna show the user a list anyway.
+
+## Uncertain and reversible spreadsheets
 
 Estimating Amazon hosting costs for a fictional video streaming company:
 
@@ -101,3 +126,16 @@ var dist = MH(model, 30000);
 print("Expected cost: $" + expectation(dist))
 viz.density(dist, {bounds: [300,500]})
 ~~~~
+
+Advantages:
+
+- Gives uncertainties about price
+- Can ask what-if questions: what if B goes viral? what could cause costs to be high?
+
+## Image denoising
+
+## Variational autoencoder 
+
+## Exercises
+
+todo: figure out some exercises
