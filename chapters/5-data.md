@@ -74,7 +74,7 @@ We give people a scale and ask them to weigh themselves and report the numbers. 
 
 What we really care about is just estimates of peoples' true weight, don't care that much about interpreting parameters (though #4 is kind of interesting)
 
-note that this would be hard to do 
+note that this would be hard to do in a non-PPL (censoring is hard, non-conjugacy)
 
 ## Ordinal regression with endpoint aversion
 
