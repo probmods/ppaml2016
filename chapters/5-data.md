@@ -7,39 +7,69 @@ description: "Analyzing data to gain insight into the processes that may have ge
 # Bayesian data analysis
 
 ~~~~
-var sampleGroup = function() { return flip(0.5) ? "bonafide" : "accidental" }
+var foreach = function(lst, fn) {
+    var foreach_ = function(i) {
+        if (i < lst.length) {
+            fn(lst[i]);
+            foreach_(i + 1);
+        }
+    };
+    foreach_(0);
+};
+
+var personIDs = _.uniq(_.pluck(data, "id"));
 
 var model = function() {
-  var bonafideLogTime = gaussian(3,3);
-  var accidentalLogTime = uniform(0, bonafideLogTime);
-  var sigma = uniform(0, 5);
 
-  var personAssignments = repeat(n_people, sampleGroup)
+  var logTimes = {
+    bonafide: gaussian(3,3), // exp(3) ~ 20s
+    accidental: gaussian(0,2), // exp(2) ~ 7s
+  }
+
+  var sigmas =  {
+    bonafide: uniform(0,3),
+    accidental: uniform(0,3),
+  }
 
   var hitRates = {
     red: uniform(0,1),
     blue: uniform(0,1)
   };
 
-  foreach(_.range(0, n_people), function(person_id) {
-      var personData = _.pluck(data, "id", person_id);
+  var phi = uniform(0,1);
 
-      var pAssignment = personAssignments[person_id];
-      var meanLogTime = (pAssignment == "bonafide") ? bonafideLogTime : accidentalLogTime;
+  var sampleGroup = function(id) { return [id, flip(phi) ? "bonafide" : "accidental"  ] }
 
-      factor(Gaussian({mu: meanLogTime, sigma: sigma}).score(Math.log(personData.time)))
+ var personAssignments = _.object(map(sampleGroup, personIDs));
 
-      (pAssignment == "bonafide") ?
-        factor(Bernoulli({p: hitRates[personData.condition]}).score(personData.converted == 1) ) :
-        null
+  foreach(personIDs, function(person_id) {
+      // subset is a header.js function from mht
+      var personData = subset(data, "id", person_id)[0];
+      // var group = function(id) { return flip(phi) ? "bonafide" : "accidental" }
+
+      var group = personAssignments[person_id];
+
+      var scr1 = Gaussian({mu: logTimes[group], 
+                          sigma: sigmas[group]}).score(personData.time)
+
+      factor(scr1)
+
+      var acceptanceRate = (group == "bonafide") ? 
+            hitRates[personData.condition] : 0.001
+
+      
+      var scr2 = Bernoulli({p:acceptanceRate}).score(personData.converted)
+      factor(scr2)
+
   })
 
-  return {
-    bonafideLogTime : bonafideLogTime,
-    accidentalLogTime : accidentalLogTime,
-    blue_hitRate : hitRates.blue,
-    red_hitRate : hitRates.red
-  }
+  return { logTimes_accidental: logTimes.accidental,
+            logTimes_bonafide: logTimes.bonafide, 
+            sigma_accidental: sigmas.accidental,
+            sigma_bonafide: sigmas.bonafide, 
+            blue: hitRates.blue,
+            red: hitRates.red, 
+            percent_bonafide: phi }
 
 }
 
