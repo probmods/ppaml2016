@@ -5,7 +5,6 @@ var extractPixels = function(cv) {
       fh = cv.height; //224
 
   var imageData = cv.getContext('2d').getImageData(0,0,fw,fh).data;
-
   // imageData is a Uint8ClampedArray array with fw * fh * 4 (rgba) elements
 
   var binaryPixels = [];
@@ -15,9 +14,6 @@ var extractPixels = function(cv) {
   }
 
   var mode = function(xs) {
-    //debugger;
-
-    // assume that all pixels are either 0 or 255
     var numOn = _.reduce(xs,
                          function(acc, x) {return acc + (x > 128 ? 1 : 0)},
                          0);
@@ -49,6 +45,34 @@ var extractPixels = function(cv) {
   return pixels;
 }
 
+// NB: I'm writing a webppl model here, which I compile later on
+// using webppl.compile. I pass this thing arguments using globalStore
+var encoderProgram = function() {
+  var zDim = 10;
+  var hDecodeDim = 500;
+  var hEncodeDim = 500;
+  var xDim = 784;
+
+
+  var x = globalStore['x'];
+
+  var W0 = globalStore['W0'],
+      W1 = globalStore['W1'],
+      W2 = globalStore['W2'],
+      b0 = globalStore['b0'],
+      b1 = globalStore['b1'],
+      b2 = globalStore['b2'];
+
+  var h = T.tanh(T.add(T.dot(W0, x), b0));
+  var mu = T.add(T.dot(W1, h), b1);
+  var sigma = T.exp(T.mul(T.add(T.dot(W2, h), b2),
+                          1/2));
+  return {mu: mu, sigma: sigma};
+}
+
+// TODO: have to do something different for 0.8.2
+var encoder = webppl.compile(encoderProgram);
+
 $(function() {
   var $canvas = $('.mnist-draw'),
       canvas = $canvas[0];
@@ -74,7 +98,7 @@ $(function() {
     var pixels = extractPixels();
     //debugger;
 
-    // visualize downsampled as a picture
+    // visualize downsampled picture
     var i = 0;
     var table = ["<table>"];
     for(var r = 0; r < 28; r++) {
@@ -93,6 +117,38 @@ $(function() {
 
     $("#downsampled").html(table);
 
+    // pass pixels through encoder
+    f(_.extend({x: pixels}, encoderParams
+
+    // sample codes
+
   })
+
+  var codec = msgpack.createCodec();
+  codec.addExtUnpacker(0x3F, unpackTensor);
+
+  var Tensor = ad.tensor.__Tensor; /* TODO: this takes advantage of an undocumented hack i found in webppl for daipp-friendliness; submit a PR in webppl to export Tensor constructor */
+  function unpackTensor(buffer) {
+    var obj = msgpack.decode(buffer);
+    var t = new Tensor(obj.dims);
+    t.data = obj.data;
+    return t;
+  }
+
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function(){
+    if (this.readyState == 4 && this.status == 200){
+      //this.response is what you're looking for
+      //console.log(this.response, typeof this.response);
+      if (this.response) {
+        var byteArray = new Uint8Array(this.response);
+        encoderParams = msgpack.decode(byteArray, {codec: codec});
+        console.log('got encoder params')
+      }
+    }
+  }
+  xhr.open('GET', '../assets/data/encoder-params.msp');
+  xhr.responseType = "arraybuffer";
+  xhr.send();
 
 });
