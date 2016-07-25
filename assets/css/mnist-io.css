@@ -1,0 +1,25 @@
+.mnist-draw {
+    border: 1px solid black;
+}
+
+#downsampled {
+    display: inline-block
+}
+
+#downsampled table {
+    border: 1px solid gray;
+}
+
+#downsampled td {
+    width: 8px;
+    height: 8px;
+    line-height: 4px;
+}
+
+#downsampled .on {
+    background-color: gray
+}
+
+#downsampled .off {
+    background-color: white
+}
