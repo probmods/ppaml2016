@@ -53,7 +53,6 @@ var encoderProgram = function() {
   var hEncodeDim = 500;
   var xDim = 784;
 
-
   var x = globalStore['x'];
 
   var W0 = globalStore['W0'],
@@ -64,22 +63,71 @@ var encoderProgram = function() {
       b2 = globalStore['b2'];
 
   var h = T.tanh(T.add(T.dot(W0, x), b0));
+
   var mu = T.add(T.dot(W1, h), b1);
   var sigma = T.exp(T.mul(T.add(T.dot(W2, h), b2),
                           1/2));
+
   return {mu: mu, sigma: sigma};
 }
 
-// TODO: have to do something different for 0.8.2
-var encoder = webppl.compile(encoderProgram);
+// TODO: will have to switch to the compile-prepare-run stratey once #570 is merged
+var encoder = eval.call({},
+                        webppl.compile(['(',encoderProgram.toString(),')()'].join('')));
 
 $(function() {
+
+  // load encoder params
+  var xhr1 = new XMLHttpRequest();
+  xhr1.onreadystatechange = function(){
+    if (this.readyState == 4 && this.status == 200){
+      //this.response is what you're looking for
+      //console.log(this.response, typeof this.response);
+      if (this.response) {
+        var byteArray = new Uint8Array(this.response);
+        encoderParams = msgpack.decode(byteArray, {codec: codec});
+        encoderStore = _.mapObject(encoderParams, _.first);
+        console.log('got encoder params')
+
+
+      }
+    }
+  }
+  xhr1.open('GET', '../assets/data/encoder-params.msp');
+  xhr1.responseType = "arraybuffer";
+  xhr1.send();
+
+  // load pre-trained latents
+  var xhr2 = new XMLHttpRequest();
+  xhr2.onreadystatechange = function(){
+    if (this.readyState == 4 && this.status == 200){
+      //this.response is what you're looking for
+      //console.log(this.response, typeof this.response);
+      if (this.response) {
+        var byteArray = new Uint8Array(this.response);
+        latents = msgpack.decode(byteArray, {codec: codec});
+        console.log('got latents');
+        knn = new kNear(30);
+        _.each(latents,
+               function(latent) {
+                 knn.learn(latent.mu.data, latent.label + '')
+               });
+        console.log('learned neighbors');
+      }
+
+    }
+  }
+  xhr2.open('GET', '../assets/data/latents.msp');
+  xhr2.responseType = "arraybuffer";
+  xhr2.send();
+
   var $canvas = $('.mnist-draw'),
       canvas = $canvas[0];
-  $canvas.sketch({defaultSize: 40});
+  $canvas.sketch({defaultSize: 12});
   sketch = $canvas.sketch();
 
   $('#mnist-clear').click(function() {
+    $("#mnist-result span").empty()
     $("#downsampled").empty()
     sketch.set('tool', 'eraser');
     // fake event needs pageX and pageY for drawing to work
@@ -96,7 +144,6 @@ $(function() {
 
   $('#mnist-classify').click(function() {
     var pixels = extractPixels();
-    //debugger;
 
     // visualize downsampled picture
     var i = 0;
@@ -117,8 +164,17 @@ $(function() {
 
     $("#downsampled").html(table);
 
+    var runner = util.trampolineRunners.web(function() { console.error(arguments) });
+    var f = encoder(runner);
+
     // pass pixels through encoder
-    f(_.extend({x: pixels}, encoderParams
+    encoderStore.x = new Tensor([pixels.length, 1]);
+    encoderStore.x.data = new Float64Array(pixels);
+    var res = f(encoderStore,
+                function(s,x) {
+                  $("#mnist-result span").text(knn.classify(x.mu.data))
+                },
+                '');
 
     // sample codes
 
@@ -135,20 +191,9 @@ $(function() {
     return t;
   }
 
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function(){
-    if (this.readyState == 4 && this.status == 200){
-      //this.response is what you're looking for
-      //console.log(this.response, typeof this.response);
-      if (this.response) {
-        var byteArray = new Uint8Array(this.response);
-        encoderParams = msgpack.decode(byteArray, {codec: codec});
-        console.log('got encoder params')
-      }
-    }
-  }
-  xhr.open('GET', '../assets/data/encoder-params.msp');
-  xhr.responseType = "arraybuffer";
-  xhr.send();
+
+
+
+
 
 });

@@ -2,8 +2,12 @@
     border: 1px solid black;
 }
 
+.mnist-draw:hover {
+    cursor: crosshair;
+}
+
 #downsampled {
-    display: inline-block
+    display: inline-block;
 }
 
 #downsampled table {
@@ -18,9 +22,9 @@
 }
 
 #downsampled .on {
-    background-color: gray
+    background-color: gray;
 }
 
 #downsampled .off {
-    background-color: white
+    background-color: white;
 }
