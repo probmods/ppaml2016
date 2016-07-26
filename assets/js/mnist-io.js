@@ -109,7 +109,6 @@ $(function() {
         encoderParams = msgpack.decode(byteArray, {codec: codec});
         encoderStore = _.mapObject(encoderParams, _.first);
         loaded++;
-        $('.mnist .loading').append('<p>Downloaded encoder parameters</p>');
         start();
       }
     }
@@ -118,6 +117,10 @@ $(function() {
       "http://s3-us-west-2.amazonaws.com/cdn.webppl.org/";
   xhr1.open('GET', xhrPrefix + 'encoder-params.msp');
   xhr1.responseType = "arraybuffer";
+  xhr1.addEventListener("progress", function(e) {
+    var pct = Math.floor(e.loaded * 100 / e.total);
+    $(".progress-params").text(pct + "%");
+  });
   xhr1.send();
 
   // load pre-trained latents
@@ -125,7 +128,6 @@ $(function() {
   xhr2.onreadystatechange = function(){
     if (this.readyState == 4 && this.status == 200){
       if (this.response) {
-        $('.mnist .loading').append('<p>Downloaded pre-trained latents</p>')
         var byteArray = new Uint8Array(this.response);
         latents = msgpack.decode(byteArray, {codec: codec});
         knn = new kNear(30);
@@ -133,7 +135,6 @@ $(function() {
                function(latent) {
                  knn.learn(latent.mu.data, latent.label + '')
                });
-        $('.mnist .loading').append('<p>Loaded latents</p>')
         loaded++;
         start();
       }
@@ -141,6 +142,10 @@ $(function() {
   }
   xhr2.open('GET', xhrPrefix + 'latents.msp');
   xhr2.responseType = "arraybuffer";
+  xhr2.addEventListener("progress", function(e) {
+    var pct = Math.floor(e.loaded * 100 / e.total);
+    $(".progress-latents").text(pct + "%");
+  });
   xhr2.send();
 
   var $canvas = $('.mnist canvas'),
@@ -188,7 +193,7 @@ $(function() {
     table = table.join("\n");
     $(".mnist .downsampled").html(table);
 
-    // pass pixels through encoder
+    // pass pixels through encoder and do knn
     var runner = util.trampolineRunners.web(function() { console.error(arguments) });
     var f = encoder(runner);
     encoderStore.x = new Tensor([pixels.length, 1]);
@@ -198,9 +203,7 @@ $(function() {
                   $(".mnist .result span").text(knn.classify(x.mu.data))
                 },
                 '');
-
   }
-
   $('.mnist .classify').click(classify);
 
 });
