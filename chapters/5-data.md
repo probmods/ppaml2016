@@ -49,26 +49,26 @@ var model = function() {
 
       var group = personAssignments[person_id];
 
-      var scr1 = Gaussian({mu: logTimes[group], 
+      var scr1 = Gaussian({mu: logTimes[group],
                           sigma: sigmas[group]}).score(personData.time)
 
       factor(scr1)
 
-      var acceptanceRate = (group == "bonafide") ? 
+      var acceptanceRate = (group == "bonafide") ?
             hitRates[personData.condition] : 0.001
 
-      
+
       var scr2 = Bernoulli({p:acceptanceRate}).score(personData.converted)
       factor(scr2)
 
   })
 
   return { logTimes_accidental: logTimes.accidental,
-            logTimes_bonafide: logTimes.bonafide, 
+            logTimes_bonafide: logTimes.bonafide,
             sigma_accidental: sigmas.accidental,
-            sigma_bonafide: sigmas.bonafide, 
+            sigma_bonafide: sigmas.bonafide,
             blue: hitRates.blue,
-            red: hitRates.red, 
+            red: hitRates.red,
             percent_bonafide: phi }
 
 }
@@ -79,7 +79,7 @@ var model = function() {
   - This is a shortened version of MH's BDA course.
   - http://forestdb.org/models/bayesian-data-analysis.html
     -In contrast to this page, we might want 2-3 real datasets
-- Content
+-Content
   - *MH to revise content*
   -Input/output of data
   - Occam's razor
