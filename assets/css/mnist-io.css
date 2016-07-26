@@ -12,6 +12,8 @@
 
 #downsampled table {
     border: 1px solid gray;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #downsampled td {
