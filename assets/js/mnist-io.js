@@ -93,7 +93,9 @@ $(function() {
       }
     }
   }
-  xhr1.open('GET', '../assets/data/encoder-params.msp');
+  var xhrPrefix = location.href.indexOf("127.0.0.1") > 0 ? "../assets/data/"  :
+      "http://s3-us-west-2.amazonaws.com/cdn.webppl.org/";
+  xhr1.open('GET', xhrPrefix + 'encoder-params.msp');
   xhr1.responseType = "arraybuffer";
   xhr1.send();
 
@@ -117,7 +119,7 @@ $(function() {
 
     }
   }
-  xhr2.open('GET', '../assets/data/latents.msp');
+  xhr2.open('GET', xhrPrefix + 'latents.msp');
   xhr2.responseType = "arraybuffer";
   xhr2.send();
 
