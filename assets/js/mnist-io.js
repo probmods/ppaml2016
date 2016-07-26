@@ -1,8 +1,10 @@
-/* get pixels of the full image, binarize, and then downsample to 28 x 28 */
+// get pixels of the full image, binarize, and then downsample to 28 x 28
+// TODO: switch to first downsampling to 20x20, finding bounding box,
+// and then returning a 28x28 image centered on that (as hinted at by the
+// mnist website)
 var extractPixels = function(cv) {
-  cv = cv || $('.mnist-draw')[0];
-  var fw = cv.width,
-      fh = cv.height; //224
+  cv = cv || $('.mnist canvas')[0];
+  var fw = cv.width, fh = cv.height; //224
 
   var imageData = cv.getContext('2d').getImageData(0,0,fw,fh).data;
   // imageData is a Uint8ClampedArray array with fw * fh * 4 (rgba) elements
@@ -46,7 +48,7 @@ var extractPixels = function(cv) {
 }
 
 // NB: I'm writing a webppl model here, which I compile later on
-// using webppl.compile. I pass this thing arguments using globalStore
+// using webppl.compile. I pass arguments to this thing using globalStore
 var encoderProgram = function() {
   var zDim = 10;
   var hDecodeDim = 500;
@@ -77,19 +79,38 @@ var encoder = eval.call({},
 
 $(function() {
 
+  var codec = msgpack.createCodec();
+  codec.addExtUnpacker(0x3F, unpackTensor);
+
+  var Tensor = ad.tensor.__Tensor; /* TODO: this takes advantage of an undocumented hack i found in webppl for daipp-friendliness; submit a PR in webppl to export Tensor constructor */
+  function unpackTensor(buffer) {
+    var obj = msgpack.decode(buffer);
+    var t = new Tensor(obj.dims);
+    t.data = obj.data;
+    return t;
+  }
+
+  var loaded = 0;
+  var start = function() {
+    if (loaded == 2) {
+      setTimeout(function() {
+        $(".mnist .loading").hide()
+        $(".mnist .ready").show()
+      }, 200);
+    }
+  }
+
   // load encoder params
   var xhr1 = new XMLHttpRequest();
   xhr1.onreadystatechange = function(){
     if (this.readyState == 4 && this.status == 200){
-      //this.response is what you're looking for
-      //console.log(this.response, typeof this.response);
       if (this.response) {
         var byteArray = new Uint8Array(this.response);
         encoderParams = msgpack.decode(byteArray, {codec: codec});
         encoderStore = _.mapObject(encoderParams, _.first);
-        console.log('got encoder params')
-
-
+        loaded++;
+        $('.mnist .loading').append('<p>Downloaded encoder parameters</p>');
+        start();
       }
     }
   }
@@ -103,36 +124,36 @@ $(function() {
   var xhr2 = new XMLHttpRequest();
   xhr2.onreadystatechange = function(){
     if (this.readyState == 4 && this.status == 200){
-      //this.response is what you're looking for
-      //console.log(this.response, typeof this.response);
       if (this.response) {
+        $('.mnist .loading').append('<p>Downloaded pre-trained latents</p>')
         var byteArray = new Uint8Array(this.response);
         latents = msgpack.decode(byteArray, {codec: codec});
-        console.log('got latents');
         knn = new kNear(30);
         _.each(latents,
                function(latent) {
                  knn.learn(latent.mu.data, latent.label + '')
                });
-        console.log('learned neighbors');
+        $('.mnist .loading').append('<p>Loaded latents</p>')
+        loaded++;
+        start();
       }
-
     }
   }
   xhr2.open('GET', xhrPrefix + 'latents.msp');
   xhr2.responseType = "arraybuffer";
   xhr2.send();
 
-  var $canvas = $('.mnist-draw'),
+  var $canvas = $('.mnist canvas'),
       canvas = $canvas[0];
   $canvas.sketch({defaultSize: 12});
   sketch = $canvas.sketch();
 
-  $('#mnist-clear').click(function() {
-    $("#mnist-result span").empty()
-    $("#downsampled").empty()
+  // wire up Clear button
+  var reset = function() {
+    $(".mnist .result span").empty()
+    $(".mnist .downsampled").empty()
     sketch.set('tool', 'eraser');
-    // fake event needs pageX and pageY for drawing to work
+    // fake event needs pageX and pageY for eraser to work
     var position = $(sketch.el).position(),
         pageX = position.left + 10,
         pageY = position.top + 10,
@@ -142,9 +163,11 @@ $(function() {
     $canvas.trigger(e1);
     $canvas.trigger(e2);
     sketch.set('tool', 'marker');
-  });
+  }
+  $('.mnist .clear').click(reset);
 
-  $('#mnist-classify').click(function() {
+  // wire up Classify button
+  var classify = function() {
     var pixels = extractPixels();
 
     // visualize downsampled picture
@@ -163,39 +186,21 @@ $(function() {
     }
     table.push("</table>");
     table = table.join("\n");
-
-    $("#downsampled").html(table);
-
-    var runner = util.trampolineRunners.web(function() { console.error(arguments) });
-    var f = encoder(runner);
+    $(".mnist .downsampled").html(table);
 
     // pass pixels through encoder
+    var runner = util.trampolineRunners.web(function() { console.error(arguments) });
+    var f = encoder(runner);
     encoderStore.x = new Tensor([pixels.length, 1]);
     encoderStore.x.data = new Float64Array(pixels);
     var res = f(encoderStore,
                 function(s,x) {
-                  $("#mnist-result span").text(knn.classify(x.mu.data))
+                  $(".mnist .result span").text(knn.classify(x.mu.data))
                 },
                 '');
 
-    // sample codes
-
-  })
-
-  var codec = msgpack.createCodec();
-  codec.addExtUnpacker(0x3F, unpackTensor);
-
-  var Tensor = ad.tensor.__Tensor; /* TODO: this takes advantage of an undocumented hack i found in webppl for daipp-friendliness; submit a PR in webppl to export Tensor constructor */
-  function unpackTensor(buffer) {
-    var obj = msgpack.decode(buffer);
-    var t = new Tensor(obj.dims);
-    t.data = obj.data;
-    return t;
   }
 
-
-
-
-
+  $('.mnist .classify').click(classify);
 
 });

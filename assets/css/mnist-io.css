@@ -1,32 +1,41 @@
-.mnist-draw {
+.mnist .loading {
+    height: 260px;
+    font-family: Courier;
+}
+
+.mnist canvas {
     border: 1px solid black;
 }
 
-.mnist-draw:hover {
+.mnist canvas:hover {
     cursor: crosshair;
 }
 
-#downsampled {
+.mnist .downsampled {
     display: inline-block;
 }
 
-#downsampled table {
+.mnist .downsampled table {
     border: 1px solid gray;
     -webkit-user-select: none;
     user-select: none;
 }
 
-#downsampled td {
+.mnist .downsampled td {
     width: 7px;
     height: 7px;
     border: 1px solid #ccc;
     line-height: 4px;
 }
 
-#downsampled .on {
+.downsampled .on {
     background-color: gray;
 }
 
-#downsampled .off {
+.downsampled .off {
     background-color: white;
+}
+
+.mnist .ready {
+    display: none;
 }
