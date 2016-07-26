@@ -166,7 +166,7 @@ Advantages:
 
 ## Variational autoencoder
 
-[link]({{ "/chapters/5-2-6-vae.html" | prepend: site.baseurl }})
+[link]({{ "/chapters/vae.html" | prepend: site.baseurl }})
 
 
 ## Exercises
