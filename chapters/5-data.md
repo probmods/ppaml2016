@@ -162,7 +162,7 @@ Advantages:
 
 ## Variational autoencoder
 
-[link]({{ "/chapters/vae.html" | prepend: site.baseurl }})
+[link]({{ "/chapters/5-vae.html" | prepend: site.baseurl }})
 
 
 ## Exercises
