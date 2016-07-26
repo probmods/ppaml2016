@@ -112,7 +112,7 @@ note that this would be hard to do in a non-PPL (censoring is hard, non-conjugac
 
 Point of this section is that getting posterior probs. exactly right might not be so important because you're just gonna show the user a list anyway.
 
-## Uncertain and reversible spreadsheets
+## Uncertain and reversible financial models
 
 Estimating Amazon hosting costs for a fictional video streaming company:
 
