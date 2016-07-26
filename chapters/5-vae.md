@@ -53,18 +53,27 @@ we can use a neural net for `f`.
 we don't know what the weights of the net are, so we put a prior on those:
 
 ~~~~
-var W = sample(TensorGaussian({mu: 0, sigma: 1, dims: [9, 2]}));
-
-var f = function(z) {
-  return T.sigmoid(T.dot(W, z));
-};
+///fold:
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
+}
+///
 
 var z = sample(TensorGaussian({mu: 0, sigma: 1, dims: [2, 1]}));
 
+var W = sample(TensorGaussian({mu: 0, sigma: 1, dims: [9, 2]}));
+var f = function(z) {
+  return T.sigmoid(T.dot(W, z));
+};
 var probs = f(z);
+
 var pixels = sample(MultivariateBernoulli({ps: probs}));
 
-pixels;
+printPixels(pixels)
 ~~~~
 
 this program now runs.
@@ -76,11 +85,12 @@ note that the neural net `f` is shared across all data points.
 
 ~~~~
 ///fold:
-var vectorAdd = function(as, bs) { map2(function(a,b) { a + b}, as, bs)}
-var columnMeans = function(rows) {
-  var n = rows.length;
-  var sums = reduce(vectorAdd, rows[0], rows.slice(1));
-  return map(function(y) { y / n}, sums)
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
 }
 ///
 
@@ -123,16 +133,8 @@ var dist = Infer({method: 'MCMC',
                   callbacks: [wpEditor.MCMCProgress()]
                  }, model)
 
-var makePicture = function(_ar) {
-  var ar = map(function(x) { x > 0.5 ? "*" : " "}, _ar);
-  print([ar.slice(0,3).join(' '),
-   ar.slice(3,6).join(' '),
-   ar.slice(6,9).join(' ')
-  ].join('\n'))
-}
-
 repeat(10, function() {
-  makePicture(dist.sample().data)
+  printPixels(dist.sample())
   print('--------')
 })
 ~~~~
