@@ -19,6 +19,7 @@ description: "An introduction."
         - editor: keyboard shortcuts (run model, comment, fold), working across boxes
         - viz
     - Node
+        - point to io packages (csv, json, fs)
     - rwebppl
   - Generative models
   - The WebPPL language
