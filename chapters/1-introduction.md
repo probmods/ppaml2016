@@ -4,6 +4,16 @@ title: Introduction
 description: "An introduction."
 ---
 
+WebPPL is a probabilistic programming language based on Javascript. WebPPL can be used most easily through [webppl.org](http://webppl.org). It can also be [installed locally](http://webppl.readthedocs.io/en/dev/installation.html) and run from the [command line](http://webppl.readthedocs.io/en/dev/usage.html).
+
+The deterministic part of WebPPL is a [subset of Javascript](http://dippl.org/chapters/02-webppl.html).
+The probabilistic aspects come from: [distributions](http://webppl.readthedocs.io/en/dev/distributions.html) and [sampling](http://webppl.readthedocs.io/en/dev/sample.html),
+marginal [inference](http://webppl.readthedocs.io/en/dev/inference/index.html),
+and [factors](http://webppl.readthedocs.io/en/dev/inference/index.html#factor).
+
+
+
+
 - Resources
   - This is a mashup of the introductory chapters of dippl, probmods, and agentmodels.
     - http://dippl.org/chapters/02-webppl.html
@@ -12,16 +22,8 @@ description: "An introduction."
     - https://probmods.org/patterns-of-inference.html
     - http://agentmodels.org/chapters/02-webppl.html
 - Content
-  - Getting set up
-    - Browser
-        - webppl.org for tinkering (share button for reproducibility?)
-        - misc: setting / recovering random seed, Chrome pauses webppl execution if you go to a different tab :/
-        - editor: keyboard shortcuts (run model, comment, fold), working across boxes
-        - viz
-    - Node
-        - point to io packages (csv, json, fs)
+    - point to io packages (csv, json, fs)
     - rwebppl
-  - Generative models
   - The WebPPL language
     - ERPs as reified distributions
     - Visualizing distributions
