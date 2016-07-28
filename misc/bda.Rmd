@@ -1,0 +1,267 @@
+---
+title: "ppaml-bda"
+author: "mht"
+date: "July 21, 2016"
+output: html_document
+---
+
+Generate data
+
+```{r generate.data}
+library(rwebppl)
+
+generateData <- "
+var sampleSubject =  function() {
+  var location = categorical({ps: [6,6,3,1.5,2,2,1], 
+                              vs: [{city : 'boston', state: 'massachusetts'},
+                                    {city:  'san francisco', state: 'california'},
+                                    {city:  'austin', state: 'texas'},
+                                    {city:  'houston', state: 'texas'},
+                                    {city:  'portland', state: 'oregon'},
+                                    {city:  'seattle', state: 'washington'},
+                                    {city:  'tuskegee', state: 'alabama'}]})
+  var browser = categorical({ps: [5,4,3,2,1], 
+                              vs:['chrome', 'firefox', 'safari', 'ie', 'opera']})
+  var condition = flip(0.5) ? 'red' : 'blue';
+
+  //var accidentalVisitor = flip(0.3);
+
+  // somehow, accidental visitors were assigned to red more often
+  var accidentalVisitor = flip(condition == 'red' ? 0.5 : 0.1) ;
+  var time = accidentalVisitor? gaussian(1, 1) : gaussian(4, 1);
+
+  var converted = accidentalVisitor ? false :
+                  flip(condition == 'red' ? 0.9 : 0.5)//  ? 1: 0;
+  return _.extend(location, 
+            {time: time, browser: browser, condition: condition, converted: converted}
+  )
+}
+repeat(100, sampleSubject)
+"
+
+rs <- webppl(generateData)
+
+#rs <- rs %>% mutate(logtime = log(time))
+
+observed_data <- rs %>%
+  mutate(id = row.names(rs))
+```
+
+Look at data
+
+```{r}
+ggplot(observed_data, aes(x = as.numeric(converted), fill = condition))+
+  geom_bar(position=position_dodge())
+
+```
+
+
+First, try the basic model:
+
+```{r basic.model}
+basicModel = '
+var foreach = function(lst, fn) {
+    var foreach_ = function(i) {
+        if (i < lst.length) {
+            fn(lst[i]);
+            foreach_(i + 1);
+        }
+    };
+    foreach_(0);
+};
+
+var personIDs = _.uniq(_.pluck(data, "id"));
+
+var model = function() {
+
+  var hitRates = {
+    red: uniform(0,1),
+    blue: uniform(0,1)
+  };
+
+  foreach(personIDs, function(person_id) {
+      var personData = subset(data, "id", person_id)[0];
+      var acceptanceRate = hitRates[personData.condition]
+      var scr = Bernoulli({p:acceptanceRate}).score(personData.converted)
+      factor(scr)
+  })
+
+  return hitRates
+
+}
+'
+
+basicModel = '
+var model = function() {
+
+  var hitRates = {
+    red: uniform(0,1),
+    blue: uniform(0,1)
+  };
+
+  var blueData = subset(data, "condition", "blue")[0];
+  var redData = subset(data, "condition", "red")[0];
+
+  factor(Binomial({n: blueData.n, p: hitRates.blue}).score(blueData.k))
+  factor(Binomial({n: redData.n, p: hitRates.red}).score(redData.k))
+
+//  foreach(personIDs, function(person_id) {
+//      var personData = subset(data, "id", person_id)[0];
+//      var acceptanceRate = hitRates[personData.condition]
+//      var scr = Bernoulli({p:acceptanceRate}).score(personData.converted)
+//      factor(scr)
+//  })
+
+  return hitRates
+
+}
+'
+
+
+summarized_data <- observed_data %>%
+  group_by(condition) %>%
+  summarize(k = sum(as.numeric(converted)),
+            n = n())
+
+print(summarized_data)
+numSamples <- 10000
+
+rs <- webppl(basicModel, 
+       data = summarized_data,
+       data_var = "data",
+       inference_opts = list(method = "MCMC",
+                            # kernel = list(HMC = list(steps = 5, stepSize = 0.02)),
+                             samples = numSamples,
+                             burn = numSamples/2,
+                             verbose = TRUE),
+       model_var = "model",
+       output_format = "samples",
+       packages = c("mht"))
+```
+
+Visualize
+
+```{r}
+rs.tidy <- rs %>% 
+  gather(key, val)
+
+ggplot(rs.tidy, aes(x = val, fill=key))+
+  geom_histogram()+
+  facet_wrap(~key, scales = 'free')
+
+rs.tidy %>%
+  group_by(key) %>%
+  summarize(MAP = estimate_mode(val))
+
+
+```
+
+Look at log time 
+
+```{r}
+rs %>% select(time) %>% mutate(time = log(time)) %>% qplot() + xlim(0, 1000)
+```
+
+Looks like 2 distrubtions maybe?
+
+```{r}
+model = '
+var foreach = function(lst, fn) {
+    var foreach_ = function(i) {
+        if (i < lst.length) {
+            fn(lst[i]);
+            foreach_(i + 1);
+        }
+    };
+    foreach_(0);
+};
+
+var personIDs = _.uniq(_.pluck(data, "id"));
+
+var model = function() {
+
+  var logTimes = {
+    bonafide: gaussian(3,2), // exp(3) ~ 20s
+    accidental: gaussian(0,2), // exp(2) ~ 7s
+  }
+
+  //var sigma = uniform(0,3);
+
+  var sigmas =  {
+    bonafide: sigma, //uniform(0,3),
+    accidental: sigma, // uniform(0,3),
+  }
+
+  var hitRates = {
+    red: uniform(0,1),
+    blue: uniform(0,1)
+  };
+
+  var phi = uniform(0,1);
+
+  var sampleGroup = function(id) { return [id, flip(phi) ? "bonafide" : "accidental"  ] }
+
+ var personAssignments = _.object(map(sampleGroup, personIDs));
+
+  foreach(personIDs, function(person_id) {
+      var personData = subset(data, "id", person_id)[0];
+      // var group = function(id) { return flip(phi) ? "bonafide" : "accidental" }
+
+      var group = personAssignments[person_id];
+
+      var scr1 = Gaussian({mu: logTimes[group], 
+                          sigma: sigmas[group]}).score(personData.time)
+
+      factor(scr1)
+
+      var acceptanceRate = (group == "bonafide") ? 
+            hitRates[personData.condition] : 0.001
+
+      
+      var scr2 = Bernoulli({p:acceptanceRate}).score(personData.converted)
+      factor(scr2)
+
+  })
+
+  return { logTimes_accidental: logTimes.accidental,
+            logTimes_bonafide: logTimes.bonafide, 
+            sigma_accidental: sigmas.accidental,
+            sigma_bonafide: sigmas.bonafide, 
+            blue: hitRates.blue,
+            red: hitRates.red, 
+            percent_bonafide: phi }
+
+}
+'
+
+numSamples <- 500
+
+rs <- webppl(model, 
+       data = observed_data,
+       data_var = "data",
+       inference_opts = list(method = "MCMC",
+                             kernel = list(HMC = list(steps = 5, stepSize = 0.02)),
+                             samples = numSamples,
+                             burn = numSamples/2,
+                             verbose = TRUE),
+       model_var = "model",
+       output_format = "samples",
+       packages = c("mht"))
+```
+
+Visualize
+
+```{r}
+rs.tidy <- rs %>% 
+  gather(key, val)
+
+ggplot(rs.tidy, aes(x = val, fill=key))+
+  geom_histogram()+
+  facet_wrap(~key, scales = 'free')
+
+rs.tidy %>%
+  group_by(key) %>%
+  summarize(MAP = estimate_mode(val))
+
+
+```
