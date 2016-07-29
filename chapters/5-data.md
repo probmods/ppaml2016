@@ -158,11 +158,14 @@ Advantages:
 - Gives uncertainties about price
 - Can ask what-if questions: what if B goes viral? what could cause costs to be high?
 
-## Image denoising
-
 ## Variational autoencoder
 
 [link]({{ "/chapters/5-vae.html" | prepend: site.baseurl }})
+
+## Presidential election
+
+[link]({{ "/chapters/5-election.html" | prepend: site.baseurl }})
+
 
 
 ## Exercises
