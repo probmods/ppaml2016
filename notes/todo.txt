@@ -1,2 +1,0 @@
-- add instructions for updating webppl, editor, viz
-- update everything to latest version
