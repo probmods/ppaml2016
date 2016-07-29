@@ -247,11 +247,11 @@ In the above program, we are introducing a few new features:
  - `guide` optionally specifies how each random choice should be distributed in the approximate posterior.
  - `scalarParam(mu, sigma)` samples a new optimizable parameter value.
 
-To make this more concrete: for a random choice `gaussian(0, 1)`, mean-field, under the hood, actually does something like:
+To make this more concrete: for a random choice `sample(Gaussian(params))`, mean-field, under the hood, actually does something like:
 
 ~~~~
-gaussian(0, 1, {
-	guide: Gaussian({mu: scalarParam(0, 1), sigma: Math.exp(scalarParam(0, 1))})
+sample(Gaussian(params), {
+  guide: Gaussian({mu: scalarParam(0, 1), sigma: Math.exp(scalarParam(0, 1))})
 });
 ~~~~
 

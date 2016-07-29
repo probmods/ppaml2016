@@ -1,12 +1,16 @@
 ---
 layout: chapter
 title: Data - analysis and prediction
+custom_js:
+- /assets/js/cityData.js
+- /assets/js/bdaHelpers.js
 description: "Analyzing data to gain insight into the processes that may have generated it and to make predictions on new data."
 ---
 
 # Bayesian data analysis
 
 ~~~~
+///fold:
 var foreach = function(lst, fn) {
     var foreach_ = function(i) {
         if (i < lst.length) {
@@ -16,8 +20,9 @@ var foreach = function(lst, fn) {
     };
     foreach_(0);
 };
+///
 
-var personIDs = _.uniq(_.pluck(data, "id"));
+var personIDs = _.uniq(_.pluck(cityData, "id"));
 
 var model = function() {
 
