@@ -1,12 +1,16 @@
 ---
 layout: chapter
 title: Data - analysis and prediction
+custom_js:
+- /assets/js/cityData.js
+- /assets/js/bdaHelpers.js
 description: "Analyzing data to gain insight into the processes that may have generated it and to make predictions on new data."
 ---
 
 # Bayesian data analysis
 
 ~~~~
+///fold:
 var foreach = function(lst, fn) {
     var foreach_ = function(i) {
         if (i < lst.length) {
@@ -16,8 +20,9 @@ var foreach = function(lst, fn) {
     };
     foreach_(0);
 };
+///
 
-var personIDs = _.uniq(_.pluck(data, "id"));
+var personIDs = _.uniq(_.pluck(cityData, "id"));
 
 var model = function() {
 
@@ -49,26 +54,26 @@ var model = function() {
 
       var group = personAssignments[person_id];
 
-      var scr1 = Gaussian({mu: logTimes[group], 
+      var scr1 = Gaussian({mu: logTimes[group],
                           sigma: sigmas[group]}).score(personData.time)
 
       factor(scr1)
 
-      var acceptanceRate = (group == "bonafide") ? 
+      var acceptanceRate = (group == "bonafide") ?
             hitRates[personData.condition] : 0.001
 
-      
+
       var scr2 = Bernoulli({p:acceptanceRate}).score(personData.converted)
       factor(scr2)
 
   })
 
   return { logTimes_accidental: logTimes.accidental,
-            logTimes_bonafide: logTimes.bonafide, 
+            logTimes_bonafide: logTimes.bonafide,
             sigma_accidental: sigmas.accidental,
-            sigma_bonafide: sigmas.bonafide, 
+            sigma_bonafide: sigmas.bonafide,
             blue: hitRates.blue,
-            red: hitRates.red, 
+            red: hitRates.red,
             percent_bonafide: phi }
 
 }
@@ -79,7 +84,7 @@ var model = function() {
   - This is a shortened version of MH's BDA course.
   - http://forestdb.org/models/bayesian-data-analysis.html
     -In contrast to this page, we might want 2-3 real datasets
-- Content
+-Content
   - *MH to revise content*
   -Input/output of data
   - Occam's razor
@@ -106,17 +111,13 @@ What we really care about is just estimates of peoples' true weight, don't care 
 
 note that this would be hard to do in a non-PPL (censoring is hard, non-conjugacy)
 
-## Ordinal regression with endpoint aversion
-
-One advantage of PPLs is that they let you express your prior knowledge to make predictions *at all* (this example would be really hard to do in, say, R).
-
 ## Inferring regular expressions
 
 (do both selection and replacement)
 
 Point of this section is that getting posterior probs. exactly right might not be so important because you're just gonna show the user a list anyway.
 
-## Uncertain and reversible spreadsheets
+## Uncertain and reversible financial models
 
 Estimating Amazon hosting costs for a fictional video streaming company:
 
@@ -162,11 +163,14 @@ Advantages:
 - Gives uncertainties about price
 - Can ask what-if questions: what if B goes viral? what could cause costs to be high?
 
-## Image denoising
-
 ## Variational autoencoder
 
-[link]({{ "/chapters/5-2-6-vae.html" | prepend: site.baseurl }})
+[link]({{ "/chapters/5-vae.html" | prepend: site.baseurl }})
+
+## Presidential election
+
+[link]({{ "/chapters/5-election.html" | prepend: site.baseurl }})
+
 
 
 ## Exercises

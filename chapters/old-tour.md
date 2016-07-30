@@ -1,8 +1,10 @@
 ---
-layout: chapter
+layout: 
 title: A tour through model space
-description: "We show a Markov model, HMM, PCFG, hierarchical models, mixture models, and a Bayesian neural net."
+description: "Looking at a few standard models in WebPPL."
 ---
+
+In this section we collect together the WebPPL code for a few standard probabilistic models.
 
 ## Markov models
 
@@ -221,13 +223,13 @@ var makeDirichletDiscrete = function(pseudocounts) {
   globalStore[ddname] = pseudocounts;
   var ddSample = function() {
     var pc = globalStore[ddname];  // get current sufficient stats
-    var val = sample(discreteERP, [pc]);  // sample from predictive. (doesn't need to be normalized.)
+    var val = sample(Discrete({ps: pc}));  // sample from predictive. (doesn't need to be normalized.)
     globalStore[ddname] = addCount(pc, val); // update sufficient stats
     return val;
   };
   var ddObserve = function(val) {
     var pc = globalStore[ddname];  // get current sufficient stats
-    factor(discreteERP.score([normalize(pc)], val));
+    factor(Discrete({ps: normalize(pc)}).score(val));
     // score based on predictive distribution (normalize counts)
     globalStore[ddname] = addCount(pc, val); // update sufficient stats
   };
@@ -242,7 +244,7 @@ var makeDirichletDiscrete = function(pseudocounts) {
 };
 
 var dirichletDiscreteFactor = function(vs, dd, v) { // NEW
-  var i = indexOf(v, vs);
+  var i = vs.indexOf(v);
   var observe = dd.observe;
   observe(i);
 }
@@ -316,7 +318,7 @@ var model = function() {
   return counts;
 };
 
-MH(model, 5000)
+viz.table(MH(model, 5000), {top: 5})
 ~~~~
 
 ## Logistic regression
@@ -341,7 +343,7 @@ var model = function() {
 
   map2(
       function(x, label) {
-        factor(bernoulliERP.score([sigmoid(x)], label))
+        factor(Bernoulli({p: sigmoid(x)}).score(label))
       },
       xs,
       labels)

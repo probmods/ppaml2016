@@ -11,7 +11,7 @@
 //function assumes vectors are arrays of equal length
 var dist = function(v1,v2){
   var sum = 0;
-  v1.forEach(function(val,index){
+  _.each(v1, function(val,index){
     sum += Math.pow(val - v2[index],2);
   });
   return Math.sqrt(sum);
@@ -19,7 +19,7 @@ var dist = function(v1,v2){
 
 var updateMax = function(val,arr){
     var max = 0;
-    arr.forEach(function(obj){
+  _.each(arr, function(obj){
         max = Math.max(max,obj.d);
     });
     return max;
@@ -58,7 +58,7 @@ var kNear = function(k){
   this.classify = function(v){
     var voteBloc = [];
     var maxD = 0;
-    training.forEach(function(obj){
+    _.each(training, function(obj){
       var o = {d:dist(v,obj.v), vote:obj.lab};
       if (voteBloc.length < k){
         voteBloc.push(o);
