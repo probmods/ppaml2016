@@ -98,12 +98,11 @@ var model = function() {
 
 # Making predictions from data
 
-## Censored linear regression with multiple noise sources
+## Censored regression with multiple noise sources
 
 We give people a scale and ask them to weigh themselves and report the numbers. There are some realistic complications:
 
 1. The scale has a maximum limit (making this a so-called censored model)
-1. The scale is noisy
 1. Peoples' weights fluctuate
 1. There's a systematic bias for people to under-report their weights
 
@@ -111,11 +110,6 @@ What we really care about is just estimates of peoples' true weight, don't care 
 
 note that this would be hard to do in a non-PPL (censoring is hard, non-conjugacy)
 
-## Inferring regular expressions
-
-(do both selection and replacement)
-
-Point of this section is that getting posterior probs. exactly right might not be so important because you're just gonna show the user a list anyway.
 
 ## Uncertain and reversible financial models
 
@@ -176,3 +170,8 @@ Advantages:
 ## Exercises
 
 todo: figure out some exercises
+
+## other
+
+power of ten (planet money)
+mark and recapture
