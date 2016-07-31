@@ -68,7 +68,7 @@ var gaussianCDF = function(x, mu, sigma) {
 }
 ///
 
-// arizona results, adapted from 
+// arizona results, adapted from
 // http://elections.huffingtonpost.com/pollster/2016-arizona-president-trump-vs-clinton
 // ppp 276, 304
 // oh  498, 455
@@ -79,19 +79,19 @@ var p0 = 1+276+498+129+340+236; // 1480
 var p1 = 1+304+455+144+358+197; // 1459
 var simulateResult = function() {
   var p = beta(p0, p1); // use conjugacy
-  
+
   // gaussian approximation to binomial because binomial with large n is slow
   var n = 2400000; // 2012 turnout
   var np = n * p;
-  
+
   // use cdf to sample a winner rather than explicitly sampling a number of votes
   var clintonWinProb = (1 - gaussianCDF(n/2, np, np * (1-p) * p));
   //var winner = flip(clintonWinProb) ? "clinton" : "trump";
-  
+
   return clintonWinProb;
 }
 
-// write 
+// write
 util.seedRNG(1);
 expectation(Infer({method: 'forward', samples: 1e6}, simulateResult))
 
@@ -99,7 +99,66 @@ expectation(Infer({method: 'forward', samples: 1e6}, simulateResult))
 // 0.5107734807109324
 ~~~~
 
-#### how do we extend to undecided voters?
+#### extending to undecided voters: a time-varying model
+
+~~~~
+var dist0 = {
+  d: 0.47,
+  r: 0.43,
+  u: 0.10,
+};
+
+var alpha = 200;
+
+var step = function(curDist) {
+  var d = curDist.d, r = curDist.r, u = curDist.u;
+
+  var joiners  = uniform(0, 0.2  ) * u;
+  var leaversD = uniform(0, 0.001) * d;
+  var leaversR = uniform(0, 0.001) * r;
+
+  // assume that the deciders noisily mirror the people who have already decided
+  var joinerSides = dirichlet(T.mul(Vector(_.values(_.omit(curDist, 'u'))), alpha)),
+      joinersD = T.get(joinerSides, 0) * joiners,
+      joinersR = T.get(joinerSides, 1) * joiners;
+
+  return {
+    d: d - leaversD + joinersD,
+    r: r - leaversR + joinersR,
+    u: u - joiners + leaversR + leaversD
+  }
+
+}
+
+var evolve = function(dists, steps) {
+  if (steps == 0) {
+    return dists
+  } else {
+    var curDist = _.last(dists),
+        nextDist = step(curDist);
+    return evolve(dists.concat(nextDist), steps - 1)
+  }
+}
+
+var steps = 5;
+var path = evolve([dist0], steps);
+// sanity check: normalization // map(function(d) { return sum(_.values(d)) }, path)
+
+// munge data for viz
+// {d: 100, r: 200, u: 300}
+var vdist = _.flatten(mapIndexed(function(t, dist) {
+  var keys = _.keys(dist),
+      vals = _.values(dist);
+  // TODO: make viz.line invariant to the ordering here if we specify groupBy
+  return map2(function(k,v) { return {time: t, fraction: v, group: k} }, keys, vals)
+}, path))
+
+//vdist
+
+viz.line(vdist, {groupBy: 'group'})
+~~~~
+
+other notes:
 
 - could be useful to know their demographics, says the [nyt], but that's about senate elections
 - the fact that they are undecided suggests that maybe, as a group, their actual decisions will be less peaked than the early-deciders (could do this as a softmax on the decided polls and try to learn alpha)
@@ -107,7 +166,3 @@ expectation(Infer({method: 'forward', samples: 1e6}, simulateResult))
 
 
 [nyt]: http://www.nytimes.com/2014/11/05/upshot/the-secret-about-undecided-voters-theyre-predictable.html?_r=0
-
-~~~~
-
-~~~~
