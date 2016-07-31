@@ -154,9 +154,15 @@ var vdist = _.flatten(mapIndexed(function(t, dist) {
   return map2(function(k,v) { return {time: t, fraction: v, group: k} }, keys, vals)
 }, path))
 
-//vdist
 
+print('support for dems, reps, or undecided over time')
 viz.line(vdist, {groupBy: 'group'})
+
+print("percent favoring dems to reps over time");
+var ds = _.pluck(path, 'd'),
+    rs = _.pluck(path, 'r');
+viz.line(_.range(steps+1),
+         map2(function(d,r) { d / (d + r) }, ds, rs))
 ~~~~
 
 other notes:
