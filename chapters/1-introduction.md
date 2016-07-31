@@ -98,10 +98,12 @@ var model = function() {
     return Bernoulli({p: sigmoid(y)});
   }
 
+  //include observed data
   map(function(d){factor(labelDist(d.feature).score(d.label))},
       data)
 
-  return labelDist(0).score(true)
+  return sample(labelDist(0))
+//   return labelDist(0).score(true) //alternate return to explore confidence
 }
 
 viz.auto(Infer({method: 'MCMC',
@@ -134,14 +136,10 @@ var hmm = function(n) {
 
 var trueObservations = [false, false, false];
 
-var arrayEq = function(a, b) {
-  return (a.length == 0) ? true : (a[0] == b[0] && arrayEq(a.slice(1), b.slice(1)))
-}
-
 var stateDist = Infer({method: 'enumerate'},
   function() {
     var r = hmm(3);
-    factor(arrayEq(r.observations, trueObservations) ? 0 : -Infinity);
+    map2(function(o,d){condition(o===d)}, r.observations, trueObservations)
     return r.states;
   }
 )
