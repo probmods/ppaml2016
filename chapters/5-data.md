@@ -218,9 +218,9 @@ Advantages:
 
 ## Exercises
 
-todo: figure out some exercises
+extend any of these analysis or prediction examples
 
-## other
+other examples:
 
-power of ten (planet money)
-mark and recapture
+- power of ten (planet money)
+- mark and recapture
