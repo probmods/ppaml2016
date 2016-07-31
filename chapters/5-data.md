@@ -10,7 +10,7 @@ description: "Analyzing data to gain insight into the processes that may have ge
 # Bayesian data analysis
 
 ~~~~
-///fold:
+////fold:
 var foreach = function(lst, fn) {
     var foreach_ = function(i) {
         if (i < lst.length) {
@@ -20,7 +20,7 @@ var foreach = function(lst, fn) {
     };
     foreach_(0);
 };
-///
+////
 
 var personIDs = _.uniq(_.pluck(cityData, "id"));
 
@@ -48,9 +48,8 @@ var model = function() {
  var personAssignments = _.object(map(sampleGroup, personIDs));
 
   foreach(personIDs, function(person_id) {
-      // subset is a header.js function from mht
-      var personData = subset(data, "id", person_id)[0];
-      // var group = function(id) { return flip(phi) ? "bonafide" : "accidental" }
+
+      var personData = _.where(cityData, {id: person_id})[0];
 
       var group = personAssignments[person_id];
 
@@ -77,6 +76,11 @@ var model = function() {
             percent_bonafide: phi }
 
 }
+
+var posterior = Infer({method: "MCMC", samples: 10000, burn: 5000,
+                      callbacks: [editor.MCMCProgress()]}, model)
+
+viz.marginals(posterior)
 
 ~~~~
 
