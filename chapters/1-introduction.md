@@ -17,7 +17,7 @@ and [factors](http://webppl.readthedocs.io/en/dev/inference/index.html#factor).
 
 - Resources
   - [Language intro from DIPPL](http://dippl.org/chapters/02-webppl.html).
-  - [Language intro from AgentModels](http://agentmodels.org/chapters/02-webppl.html).
+  - [Language intro from AgentModels](http://agentmodels.org/chapters/2-webppl.html).
   - [Generative and cognitive modeling ideas (with Church)](https://probmods.org).
   - WebPPL [packages](http://webppl.readthedocs.io/en/dev/packages.html) (e.g. csv, json, fs).
   - If you would rather use WebPPL from R: [RWebPPL](https://github.com/mhtess/rwebppl).
