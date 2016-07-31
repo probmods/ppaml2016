@@ -3,9 +3,9 @@ layout: subchapter
 title: Data - presidential election
 ---
 
-## presidential election model
+# Basic model
 
-#### learn a state-wide preference from poll data
+## Learning a state-wide preference from poll data
 
 ~~~~
 // infer true state preference given poll
@@ -21,7 +21,7 @@ viz.density(dist,{bounds: [0.4, 0.6]})
 editor.put('pref', dist);
 ~~~~
 
-#### use the learned preference to simulate general election results
+## Using the learned preference to simulate election-day results
 
 ~~~~
 // simulating general election result
@@ -35,9 +35,13 @@ var sampleElection = function() {
   var winner = clintonVotes > trumpVotes ? "clinton" : "trump";
   return {winner: winner};
 }
-var dist = Infer({method: 'MCMC', samples: 10}, sampleElection)
-viz.hist(dist)
+var dist = Infer({method: 'forward', samples: 1000}, sampleElection)
+viz.table(dist)
 ~~~~
+
+Notice that results depend on quality of inference for learned preference above.
+(Aside: only the `forward` and `rejection` inference methods work well for this example because the Binomial scorer takes time linear in `n`).
+We can optimize this quite a bit, taking advantage of (1) conjugacy, (2) the Gaussian approximation to binomial, and (3) the CDF:
 
 ~~~~
 ///fold:
@@ -62,11 +66,11 @@ function(_x) {
 
     return sign*y;
 }
+///
 
 var gaussianCDF = function(x, mu, sigma) {
   return 0.5 * (1 + erf((x - mu) / (sigma * Math.sqrt(2))))
 }
-///
 
 // arizona results, adapted from
 // http://elections.huffingtonpost.com/pollster/2016-arizona-president-trump-vs-clinton
@@ -80,26 +84,23 @@ var p1 = 1+304+455+144+358+197; // 1459
 var simulateResult = function() {
   var p = beta(p0, p1); // use conjugacy
 
-  // gaussian approximation to binomial because binomial with large n is slow
-  var n = 2400000; // 2012 turnout
+  // gaussian approximation to binomial
+  var n = 2400000; // 2012 turnout, roughly
   var np = n * p;
 
   // use cdf to sample a winner rather than explicitly sampling a number of votes
   var clintonWinProb = (1 - gaussianCDF(n/2, np, np * (1-p) * p));
-  //var winner = flip(clintonWinProb) ? "clinton" : "trump";
 
   return clintonWinProb;
 }
 
-// write
-util.seedRNG(1);
-expectation(Infer({method: 'forward', samples: 1e6}, simulateResult))
-
-// util.seedRNG(1469818976713)
-// 0.5107734807109324
+expectation(Infer({method: 'forward', samples: 2e5}, simulateResult))
 ~~~~
 
-#### extending to undecided voters: a time-varying model
+This implementation is nice because it is fast, but it also has disadvantages.
+Can you think of any?
+
+# Extending to undecided voters: a time-varying model
 
 ~~~~
 var dist0 = {
