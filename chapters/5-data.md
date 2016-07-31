@@ -102,24 +102,67 @@ viz.marginals(posterior)
 
 # Making predictions from data
 
-## Censored linear regression with multiple noise sources
+## Censored regression with multiple noise sources
 
 We give people a scale and ask them to weigh themselves and report the numbers. There are some realistic complications:
 
 1. The scale has a maximum limit (making this a so-called censored model)
-1. The scale is noisy
 1. Peoples' weights fluctuate
 1. There's a systematic bias for people to under-report their weights
 
 What we really care about is just estimates of peoples' true weight, don't care that much about interpreting parameters (though #4 is kind of interesting)
 
-note that this would be hard to do in a non-PPL (censoring is hard, non-conjugacy)
 
-## Inferring regular expressions
+~~~~
+///fold:
+var softEqual = function(expected, reported) {
+  factor(Gaussian({mu: expected, sigma: 0.1}).score(reported))
+};
+///
 
-(do both selection and replacement)
+var predict = function(reported) {
+  var model = function() {
+    var latent = beta(2,5) * 600;
 
-Point of this section is that getting posterior probs. exactly right might not be so important because you're just gonna show the user a list anyway.
+    // fluctuation throughout the day
+    var noiseFluctuation = gaussian({mu: 0, sigma: 3});
+
+    // systematic under-reporting
+    var noiseUnderreporting = -3 * beta({a: 5, b: 5});
+
+    // scale has a maximum weight
+    var sampled = Math.min(300, latent + noiseFluctuation + noiseUnderreporting);
+
+    softEqual(sampled, reported)
+
+    return latent
+  }
+
+  var optsHMC = {method: 'MCMC',
+                 kernel: {HMC: {stepSize: 0.00001}},
+                 callbacks: [editor.MCMCProgress()],
+                 samples: 1e4}
+
+  var optsMH = {method: 'MCMC',
+                samples: 5e5,
+                callbacks: [editor.MCMCProgress()],
+                burn: 1e4}
+
+  var optsPF = {method: 'SMC',
+               samples: 1000}
+
+  Infer(optsHMC, model)
+}
+
+var dist = predict(100);
+viz.table(dist, {top: 5})
+ // workaround for hist, density bugs
+if (dist.support().length > 1) {
+  viz.density(dist)
+  viz.hist(dist, {numBins: 10})
+}
+expectation(dist)
+~~~~
 
 ## Uncertain and reversible financial models
 
@@ -142,7 +185,7 @@ var model = function() {
     }
   ];
   var storage =  sum(map(function(r) { r.size },               resources))
-  var requests = sum(map(function(r) { r.requests },           resources))
+ var requests = sum(map(function(r) { r.requests },           resources))
   var transfer = sum(map(function(r) { r.requests * r.size  }, resources))
 
   var costs = {
@@ -167,13 +210,21 @@ Advantages:
 - Gives uncertainties about price
 - Can ask what-if questions: what if B goes viral? what could cause costs to be high?
 
-## Image denoising
-
 ## Variational autoencoder
 
 [link]({{ "/chapters/5-vae.html" | prepend: site.baseurl }})
 
+## Presidential election
+
+[link]({{ "/chapters/5-election.html" | prepend: site.baseurl }})
+
+
 
 ## Exercises
 
-todo: figure out some exercises
+extend any of these analysis or prediction examples
+
+other examples:
+
+- power of ten (planet money)
+- mark and recapture

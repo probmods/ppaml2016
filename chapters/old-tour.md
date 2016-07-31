@@ -1,8 +1,10 @@
 ---
-layout: chapter
+layout: 
 title: A tour through model space
-description: "We show a Markov model, HMM, PCFG, hierarchical models, mixture models, and a Bayesian neural net."
+description: "Looking at a few standard models in WebPPL."
 ---
+
+In this section we collect together the WebPPL code for a few standard probabilistic models.
 
 ## Markov models
 
