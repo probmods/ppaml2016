@@ -37,7 +37,7 @@ var model = function() {
 
    // sample from binomial with updated p
    var posteriorPredictive = binomial({p : p, n: n});
-  
+
    // sample fresh p
    var prior_p = uniform({ a: 0, b: 1});
    // sample from binomial with fresh p
@@ -52,7 +52,7 @@ var model = function() {
 
 var numSamples = 2000;
 var inferOpts = {
-  method: "rejection", 
+  method: "rejection",
   samples: numSamples
 };
 
@@ -90,9 +90,9 @@ var model = function() {
   // Sample rate from uniform distribution
   var p = uniform( {a:0, b:1} );
 
-  var scr = Binomial({p: p, n: n1}).score(k1) + 
-            Binomial({p: p, n: n2}).score(k2); 
-  
+  var scr = Binomial({p: p, n: n1}).score(k1) +
+            Binomial({p: p, n: n2}).score(k2);
+
   factor(scr)
 
   var posteriorPredictive1 = binomial({p : p, n : n1})
@@ -106,10 +106,10 @@ var model = function() {
 
 var numSamples = 20000;
 var inferOpts = {
-  method: "MCMC", 
+  method: "MCMC",
   samples: numSamples,
-  burn: numSamples/2, 
-  callbacks: [editor.MCMCProgress()] 
+  burn: numSamples/2,
+  callbacks: [editor.MCMCProgress()]
 };
 
 var posterior = Infer(inferOpts, model);
@@ -126,12 +126,12 @@ viz.marginals(posterior)
 
 ## A - B testing
 
+
 Designing new products for the market is hard. There are many --- hundreds, thousands, ... --- of design decisions along the way. For many of them, your intuition will fail and you will have to resort to collecting data.
 
-Let's pretend we're building a website --- *GrubWatch* --- that allows users to log the food they've eaten in the past day and will compute health data for them. Your business partner has the intuition that changing the top banner of the webpage from grey to green will increase the attractiveness of the webpage. You are skeptical, however, that the color of the banner would have any effect. Your friend and you decide to allocate the next 200 visitors to this experiment: randomly paint the banner either grey or green. 
+Let's pretend we're building a website --- *GrubWatch* --- that allows users to log the food they've eaten in the past day and will compute health data for them. Your business partner has the intuition that changing the top banner of the webpage from grey to green will increase the attractiveness of the webpage. You are skeptical, however, that the color of the banner would have any effect. Your friend and you decide to allocate the next 200 visitors to this experiment: randomly paint the banner either grey or green.
 
-This is a what's called an A/B Test (here, a grey/green test). A/B testing is employed in marketing and business development to determine if one version of a product or website is better than another (better, usually according to how many people end up buying the product or using the webpage). Note that A/B testing is a special case of a psychology experiment: It is testing conditions that are thought to manipulate human behavior. 
-
+This is a what's called an A/B Test (here, a grey/green test). A/B testing is employed in marketing and business development to determine if one version of a product or website is better than another (better, usually according to how many people end up buying the product or using the webpage). Note that A/B testing is a special case of a psychology experiment: It is testing conditions that are thought to manipulate human behavior.
 
 ## Inferring a rate
 
@@ -178,10 +178,10 @@ var model = function() {
 
 var numSamples = 10000;
 var inferOpts = {
-  method: "MCMC", 
+  method: "MCMC",
   samples: numSamples,
-  burn: numSamples/2, 
-  callbacks: [editor.MCMCProgress()] 
+  burn: numSamples/2,
+  callbacks: [editor.MCMCProgress()]
 };
 
 var posterior = Infer(inferOpts, model);
