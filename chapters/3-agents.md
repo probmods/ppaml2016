@@ -4,6 +4,8 @@ title: Agents
 description: "Modeling agent behaviors as probabilistic programs."
 ---
 
+- [Motivation: Modeling decision-making](http://agentmodels.org/chapters/1-introduction.html)
+
 - [Agents as probabilistic programs](http://agentmodels.org/chapters/3-agents-as-programs.html)
   - Expected utility
   - (Stochastic) transition functions
@@ -35,6 +37,7 @@ Other topics:
 - [Biased and bounded agents, intro](http://agentmodels.org/chapters/5-biases-intro.html)
 - [Hyperbolic discounting](http://agentmodels.org/chapters/5a-time-inconsistency.html)
 - [Myopic planning](http://agentmodels.org/chapters/5c-myopic.html)
+  - A neat example: visualizing planned trajectories for a [hyperbolic agent](http://agentmodels.org/chapters/5b-time-inconsistency.html)
 - Reasoning about agents
   - [Inferring beliefs from observed behavior](http://agentmodels.org/chapters/4-reasoning-about-agents.html)
   - Inferring preferences
