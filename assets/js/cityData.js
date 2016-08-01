@@ -1,4 +1,4 @@
-var cityData = [
+var bannerData = [
  {
   "city": "austin",
   "state": "texas",
