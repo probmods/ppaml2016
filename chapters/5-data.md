@@ -195,7 +195,7 @@ You show this analysis to your friend. She is unconvinced by your analysis. She 
 This inspires you to create a build a new model, trying to account for this contamination.
 
 ~~~~
-////fold:
+///fold:
 var foreach = function(lst, fn) {
     var foreach_ = function(i) {
         if (i < lst.length) {
@@ -205,9 +205,7 @@ var foreach = function(lst, fn) {
     };
     foreach_(0);
 };
-////
-
-var personIDs = _.uniq(_.pluck(bannerData, "id"));
+///
 
 var model = function() {
 
@@ -224,28 +222,22 @@ var model = function() {
   }
 
   var conversionRates = {
-    red: uniform(0,1),
-    blue: uniform(0,1)
+    green: uniform(0,1),
+    grey: uniform(0,1)
   };
 
   // mixture parameter (i.e., % of bonafide visitors)
   var probBonafide = uniform(0,1);
 
-  var sampleGroup = function(id) { return [id, flip(probBonafide) ? "bonafide" : "accidental"  ] }
+  foreach(bannerData, function(personData) {
 
-  var personAssignments = _.object(map(sampleGroup, personIDs));
-
-  foreach(personIDs, function(person_id) {
-
-      var personData = _.where(bannerData, {id: person_id})[0];
-
-      var group = personAssignments[person_id];
+      var group = flip(probBonafide) ? "bonafide" : "accidental";
 
       var scr1 = Gaussian({mu: logTimes[group], sigma: sigmas[group]}).score(personData.time)
 
       factor(scr1)
 
-      var acceptanceRate = (group == "bonafide") ? hitRates[personData.condition] : 0.00001
+      var acceptanceRate = (group == "bonafide") ? conversionRates[personData.condition] : 0.001
 
       var scr2 = Bernoulli({p:acceptanceRate}).score(personData.converted)
 
@@ -257,17 +249,19 @@ var model = function() {
             logTimes_bonafide: logTimes.bonafide,
             sigma_accidental: sigmas.accidental,
             sigma_bonafide: sigmas.bonafide,
-            green: hitRates.green,
-            grey: hitRates.grey,
+            green: conversionRates.green,
+            grey: conversionRates.grey,
             percent_bonafide: probBonafide }
 
 }
 
-var posterior = Infer({method: "MCMC", samples: 10000, burn: 5000,
-                      callbacks: [editor.MCMCProgress()]}, model)
+var numSamples = 20000;
+var posterior = Infer({method: "incrementalMH", 
+                       samples: numSamples, 
+                       burn: numSamples/2}, 
+                      model)
 
 viz.marginals(posterior)
-
 ~~~~
 
 
