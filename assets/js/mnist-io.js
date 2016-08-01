@@ -55,14 +55,14 @@ var encoderProgram = function() {
   var hEncodeDim = 500;
   var xDim = 784;
 
-  var x = globalStore['x'];
+  var x = encoderStore['x'];
 
-  var W0 = globalStore['W0'],
-      W1 = globalStore['W1'],
-      W2 = globalStore['W2'],
-      b0 = globalStore['b0'],
-      b1 = globalStore['b1'],
-      b2 = globalStore['b2'];
+  var W0 = encoderStore['W0'],
+      W1 = encoderStore['W1'],
+      W2 = encoderStore['W2'],
+      b0 = encoderStore['b0'],
+      b1 = encoderStore['b1'],
+      b2 = encoderStore['b2'];
 
   var h = T.tanh(T.add(T.dot(W0, x), b0));
 
@@ -76,6 +76,7 @@ var encoderProgram = function() {
 // TODO: will have to switch to the compile-prepare-run stratey once #570 is merged
 var encoder = eval.call({},
                         webppl.compile(['(',encoderProgram.toString(),')()'].join('')));
+
 
 $(function() {
 
@@ -193,16 +194,21 @@ $(function() {
     table = table.join("\n");
     $(".mnist .downsampled").html(table);
 
+    var afterClassify = function(s,x) {
+      $(".mnist .result span").text(knn.classify(x.mu.data))
+    }
+
     // pass pixels through encoder and do knn
-    var runner = util.trampolineRunners.web(function() { console.error(arguments) });
-    var f = encoder(runner);
+    var handleError = function() { console.error(arguments) }
+    var baseRunner = util.trampolineRunners.web();
+    var prepared = webppl.prepare(encoder,
+                                  afterClassify,
+                                  {errorHandlers: [handleError], debug: true, baseRunner: baseRunner});
+
     encoderStore.x = new Tensor([pixels.length, 1]);
     encoderStore.x.data = new Float64Array(pixels);
-    var res = f(encoderStore,
-                function(s,x) {
-                  $(".mnist .result span").text(knn.classify(x.mu.data))
-                },
-                '');
+
+    prepared.run();
   }
   $('.mnist .classify').click(classify);
 

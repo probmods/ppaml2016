@@ -1,10 +1,10 @@
-var cityData = [
+var bannerData = [
  {
   "city": "austin",
   "state": "texas",
   "time": 3.4961,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "1"
  },
@@ -13,7 +13,7 @@ var cityData = [
   "state": "texas",
   "time": 0.6657,
   "browser": "ie",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "2"
  },
@@ -22,7 +22,7 @@ var cityData = [
   "state": "california",
   "time": 0.0009,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "3"
  },
@@ -31,7 +31,7 @@ var cityData = [
   "state": "texas",
   "time": 3.6809,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "4"
  },
@@ -40,7 +40,7 @@ var cityData = [
   "state": "alabama",
   "time": 5.3369,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "5"
  },
@@ -49,7 +49,7 @@ var cityData = [
   "state": "washington",
   "time": 2.2072,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "6"
  },
@@ -58,7 +58,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 3.1225,
   "browser": "opera",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "7"
  },
@@ -67,7 +67,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 3.8693,
   "browser": "opera",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "8"
  },
@@ -76,7 +76,7 @@ var cityData = [
   "state": "texas",
   "time": 2.0019,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "9"
  },
@@ -85,7 +85,7 @@ var cityData = [
   "state": "texas",
   "time": 3.4458,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "10"
  },
@@ -94,7 +94,7 @@ var cityData = [
   "state": "california",
   "time": 2.9102,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "11"
  },
@@ -103,7 +103,7 @@ var cityData = [
   "state": "california",
   "time": 3.0181,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "12"
  },
@@ -112,7 +112,7 @@ var cityData = [
   "state": "washington",
   "time": 4.657,
   "browser": "opera",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "13"
  },
@@ -121,7 +121,7 @@ var cityData = [
   "state": "texas",
   "time": 1.7385,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "14"
  },
@@ -130,7 +130,7 @@ var cityData = [
   "state": "massachusetts",
   "time": -0.2129,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "15"
  },
@@ -139,7 +139,7 @@ var cityData = [
   "state": "california",
   "time": 3.742,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "16"
  },
@@ -148,7 +148,7 @@ var cityData = [
   "state": "california",
   "time": 2.863,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "17"
  },
@@ -157,7 +157,7 @@ var cityData = [
   "state": "california",
   "time": 4.3338,
   "browser": "ie",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "18"
  },
@@ -166,7 +166,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 1.6524,
   "browser": "ie",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "19"
  },
@@ -175,7 +175,7 @@ var cityData = [
   "state": "washington",
   "time": 0.0731,
   "browser": "opera",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "20"
  },
@@ -184,7 +184,7 @@ var cityData = [
   "state": "california",
   "time": 2.5001,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "21"
  },
@@ -193,7 +193,7 @@ var cityData = [
   "state": "texas",
   "time": 3.4201,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "22"
  },
@@ -202,7 +202,7 @@ var cityData = [
   "state": "california",
   "time": 3.7437,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "23"
  },
@@ -211,7 +211,7 @@ var cityData = [
   "state": "california",
   "time": 3.9506,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "24"
  },
@@ -220,7 +220,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 3.432,
   "browser": "ie",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "25"
  },
@@ -229,7 +229,7 @@ var cityData = [
   "state": "california",
   "time": 5.1322,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "26"
  },
@@ -238,7 +238,7 @@ var cityData = [
   "state": "washington",
   "time": 4.5767,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "27"
  },
@@ -247,7 +247,7 @@ var cityData = [
   "state": "texas",
   "time": 2.3565,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "28"
  },
@@ -256,7 +256,7 @@ var cityData = [
   "state": "california",
   "time": 2.5453,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "29"
  },
@@ -265,7 +265,7 @@ var cityData = [
   "state": "california",
   "time": 4.5489,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "30"
  },
@@ -274,7 +274,7 @@ var cityData = [
   "state": "oregon",
   "time": 2.9941,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "31"
  },
@@ -283,7 +283,7 @@ var cityData = [
   "state": "alabama",
   "time": 3.862,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "32"
  },
@@ -292,7 +292,7 @@ var cityData = [
   "state": "texas",
   "time": 3.9549,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "33"
  },
@@ -301,7 +301,7 @@ var cityData = [
   "state": "washington",
   "time": 4.207,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "34"
  },
@@ -310,7 +310,7 @@ var cityData = [
   "state": "oregon",
   "time": 2.4722,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "35"
  },
@@ -319,7 +319,7 @@ var cityData = [
   "state": "california",
   "time": 3.1506,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "36"
  },
@@ -328,7 +328,7 @@ var cityData = [
   "state": "california",
   "time": 3.0937,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "37"
  },
@@ -337,7 +337,7 @@ var cityData = [
   "state": "california",
   "time": 3.3214,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "38"
  },
@@ -346,7 +346,7 @@ var cityData = [
   "state": "texas",
   "time": 3.5131,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "39"
  },
@@ -355,7 +355,7 @@ var cityData = [
   "state": "texas",
   "time": 4.7772,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "40"
  },
@@ -364,7 +364,7 @@ var cityData = [
   "state": "alabama",
   "time": 3.4812,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "41"
  },
@@ -373,7 +373,7 @@ var cityData = [
   "state": "california",
   "time": 1.7026,
   "browser": "ie",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "42"
  },
@@ -382,7 +382,7 @@ var cityData = [
   "state": "alabama",
   "time": 5.1109,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "43"
  },
@@ -391,7 +391,7 @@ var cityData = [
   "state": "texas",
   "time": 3.0948,
   "browser": "ie",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "44"
  },
@@ -400,7 +400,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 0.3664,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "45"
  },
@@ -409,7 +409,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 4.0567,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "46"
  },
@@ -418,7 +418,7 @@ var cityData = [
   "state": "alabama",
   "time": 1.9507,
   "browser": "opera",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "47"
  },
@@ -427,7 +427,7 @@ var cityData = [
   "state": "oregon",
   "time": -0.1632,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "48"
  },
@@ -436,7 +436,7 @@ var cityData = [
   "state": "washington",
   "time": 0.9053,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "49"
  },
@@ -445,7 +445,7 @@ var cityData = [
   "state": "california",
   "time": 3.4968,
   "browser": "ie",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "50"
  },
@@ -454,7 +454,7 @@ var cityData = [
   "state": "california",
   "time": 1.4432,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "51"
  },
@@ -463,7 +463,7 @@ var cityData = [
   "state": "oregon",
   "time": 4.1289,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "52"
  },
@@ -472,7 +472,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 5.1216,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "53"
  },
@@ -481,7 +481,7 @@ var cityData = [
   "state": "oregon",
   "time": 0.1953,
   "browser": "ie",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "54"
  },
@@ -490,7 +490,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 1.0029,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "55"
  },
@@ -499,7 +499,7 @@ var cityData = [
   "state": "alabama",
   "time": -0.548,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "56"
  },
@@ -508,7 +508,7 @@ var cityData = [
   "state": "oregon",
   "time": 0.5789,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "57"
  },
@@ -517,7 +517,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 2.718,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "58"
  },
@@ -526,7 +526,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 4.3328,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "59"
  },
@@ -535,7 +535,7 @@ var cityData = [
   "state": "washington",
   "time": 4.6614,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "60"
  },
@@ -544,7 +544,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 0.7738,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "61"
  },
@@ -553,7 +553,7 @@ var cityData = [
   "state": "texas",
   "time": 5.2732,
   "browser": "ie",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "62"
  },
@@ -562,7 +562,7 @@ var cityData = [
   "state": "oregon",
   "time": 3.3802,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "63"
  },
@@ -571,7 +571,7 @@ var cityData = [
   "state": "oregon",
   "time": 5.849,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "64"
  },
@@ -580,7 +580,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 4.7546,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "65"
  },
@@ -589,7 +589,7 @@ var cityData = [
   "state": "california",
   "time": 1.3191,
   "browser": "ie",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "66"
  },
@@ -598,7 +598,7 @@ var cityData = [
   "state": "texas",
   "time": 3.0892,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "67"
  },
@@ -607,7 +607,7 @@ var cityData = [
   "state": "california",
   "time": 1.5388,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "68"
  },
@@ -616,7 +616,7 @@ var cityData = [
   "state": "california",
   "time": 5.2492,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "69"
  },
@@ -625,7 +625,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 5.7974,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "70"
  },
@@ -634,7 +634,7 @@ var cityData = [
   "state": "massachusetts",
   "time": -0.2289,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "71"
  },
@@ -643,7 +643,7 @@ var cityData = [
   "state": "washington",
   "time": 0.3889,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "72"
  },
@@ -652,7 +652,7 @@ var cityData = [
   "state": "texas",
   "time": 5.2537,
   "browser": "ie",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "73"
  },
@@ -661,7 +661,7 @@ var cityData = [
   "state": "california",
   "time": 3.9283,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "74"
  },
@@ -670,7 +670,7 @@ var cityData = [
   "state": "oregon",
   "time": 3.8459,
   "browser": "ie",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "75"
  },
@@ -679,7 +679,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 2.4942,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "76"
  },
@@ -688,7 +688,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 0.9166,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "77"
  },
@@ -697,7 +697,7 @@ var cityData = [
   "state": "oregon",
   "time": 4.3349,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "78"
  },
@@ -706,7 +706,7 @@ var cityData = [
   "state": "texas",
   "time": 2.1861,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "79"
  },
@@ -715,7 +715,7 @@ var cityData = [
   "state": "california",
   "time": -0.5162,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "80"
  },
@@ -724,7 +724,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 3.8299,
   "browser": "opera",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "81"
  },
@@ -733,7 +733,7 @@ var cityData = [
   "state": "california",
   "time": 5.1748,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "82"
  },
@@ -742,7 +742,7 @@ var cityData = [
   "state": "texas",
   "time": 3.8127,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "83"
  },
@@ -751,7 +751,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 0.0732,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "84"
  },
@@ -760,7 +760,7 @@ var cityData = [
   "state": "oregon",
   "time": 2.11,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "85"
  },
@@ -769,7 +769,7 @@ var cityData = [
   "state": "california",
   "time": 3.7339,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "86"
  },
@@ -778,7 +778,7 @@ var cityData = [
   "state": "washington",
   "time": 2.4514,
   "browser": "firefox",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "87"
  },
@@ -787,7 +787,7 @@ var cityData = [
   "state": "texas",
   "time": 3.2831,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "88"
  },
@@ -796,7 +796,7 @@ var cityData = [
   "state": "california",
   "time": 3.9645,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "89"
  },
@@ -805,7 +805,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 2.1735,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "90"
  },
@@ -814,7 +814,7 @@ var cityData = [
   "state": "california",
   "time": 5.3385,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "91"
  },
@@ -823,7 +823,7 @@ var cityData = [
   "state": "california",
   "time": 1.6594,
   "browser": "opera",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "92"
  },
@@ -832,7 +832,7 @@ var cityData = [
   "state": "texas",
   "time": 4.7331,
   "browser": "firefox",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "93"
  },
@@ -841,7 +841,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 4.5317,
   "browser": "safari",
-  "condition": "blue",
+  "condition": "grey",
   "converted": false,
   "id": "94"
  },
@@ -850,7 +850,7 @@ var cityData = [
   "state": "california",
   "time": 4.5934,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "95"
  },
@@ -859,7 +859,7 @@ var cityData = [
   "state": "oregon",
   "time": 6.1109,
   "browser": "ie",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "96"
  },
@@ -868,7 +868,7 @@ var cityData = [
   "state": "massachusetts",
   "time": 3.9633,
   "browser": "chrome",
-  "condition": "blue",
+  "condition": "grey",
   "converted": true,
   "id": "97"
  },
@@ -877,7 +877,7 @@ var cityData = [
   "state": "texas",
   "time": 3.7855,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "98"
  },
@@ -886,7 +886,7 @@ var cityData = [
   "state": "california",
   "time": 4.046,
   "browser": "safari",
-  "condition": "red",
+  "condition": "green",
   "converted": true,
   "id": "99"
  },
@@ -895,7 +895,7 @@ var cityData = [
   "state": "alabama",
   "time": 1.789,
   "browser": "chrome",
-  "condition": "red",
+  "condition": "green",
   "converted": false,
   "id": "100"
  }
