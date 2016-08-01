@@ -297,53 +297,43 @@ What we really care about is just estimates of peoples' true weight, don't care 
 
 
 ~~~~
-///fold:
-var softEqual = function(expected, reported) {
-  factor(Gaussian({mu: expected, sigma: 0.1}).score(reported))
-};
-///
-
 var predict = function(reported) {
+
+  var driftKernel = function(prevVal) {
+    var a = 200;
+    var prop = reported / 600;
+    return Beta({a: a, b: a * (1-prop) / prop});
+  }
+
   var model = function() {
-    var latent = beta(2,5) * 600;
+    var latent = 600 * sample(Beta({a: 2, b: 5}),
+                              {driftKernel: driftKernel});
 
-    // fluctuation throughout the day
-    var noiseFluctuation = gaussian({mu: 0, sigma: 3});
+    // weight fluctuations throughout the day
+    var noise1 = gaussian({mu: 0, sigma: 3});
 
-    // systematic under-reporting
-    var noiseUnderreporting = -3 * beta({a: 5, b: 5});
+    // systematic underreporting
+    var noise2 = -5 * beta({a: 3, b: 3});
 
     // scale has a maximum weight
-    var sampled = Math.min(300, latent + noiseFluctuation + noiseUnderreporting);
+    var observed = Math.min(300,
+                            latent + noise1 + noise2);
 
-    softEqual(sampled, reported)
-
+    factor(-Math.pow(observed - reported, 2));
     return latent
   }
 
-  var optsHMC = {method: 'MCMC',
-                 kernel: {HMC: {stepSize: 0.00001}},
-                 callbacks: [editor.MCMCProgress()],
-                 samples: 1e4}
-
   var optsMH = {method: 'MCMC',
-                samples: 5e5,
+                samples: 2e5,
+                verbose: false,
                 callbacks: [editor.MCMCProgress()],
-                burn: 1e4}
+                burn: 5e4}
 
-  var optsPF = {method: 'SMC',
-               samples: 1000}
-
-  Infer(optsHMC, model)
+  Infer(optsMH, model)
 }
 
-var dist = predict(100);
-viz.table(dist, {top: 5})
- // workaround for hist, density bugs
-if (dist.support().length > 1) {
-  viz.density(dist)
-  viz.hist(dist, {numBins: 10})
-}
+var dist = predict(300);
+viz.auto(dist);
 expectation(dist)
 ~~~~
 
@@ -405,9 +395,11 @@ Advantages:
 
 ## Exercises
 
-extend any of these analysis or prediction examples
+Extend any of these analysis or prediction examples
 
-other examples:
+Other ideas:
 
-- power of ten (planet money)
-- mark and recapture
+- Power of Ten (Planet Money podcast)
+- Mark and recapture
+- Good-Turing estimator
+- (really hard?) Figure out how to perform inference on the weight prediction model with using drift kernels
