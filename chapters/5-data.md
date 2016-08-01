@@ -61,6 +61,67 @@ var posterior = Infer(inferOpts, model);
 viz.marginals(posterior)
 ~~~~
 
+### Exercises
+
+1. Make sure you understand the prior, posterior, prior predictive, and posterior predictive distributions, and how they relate to each other (why are some plots densities and others bar graphs?). Understanding these ideas is a key to understanding Bayesian analysis. Check your understanding by trying other data sets, varying both k and n.
+
+2. Try different priors on `theta`, by changing `theta = uniform(0, 1)` to `theta = beta(10,10)`, `beta(1,5)` and `beta(0.1,0.1)`. Use the figures produced to understand the assumptions these priors capture, and how they interact with the same data to produce posterior inferences and predictions.
+
+3. Predictive distributions are not restricted to exactly the same experiment as the observed data, and can be used in the context of any experiment where the inferred model parameters make predictions. In the current simple binomial setting, for example, predictive distributions could be found by an experiment that is different because it has `n' != n` observations. Change the model to implement an example of this.
+
+
+## Posterior prediction and model checking
+
+One important use of posterior predictive distributions is to examine the descriptive adequacy of a model. It can be viewed as a set of predictions about what data the model expects to see, based on the posterior distribution over parameters. If these predictions do not match the data already seen, the model is descriptively inadequate.
+
+
+The model below has k1 = 0 successes out of n1 = 10 observations, and k2 = 10 successes out of n2 = 10 observations. The code draws the posterior distribution for the rate and the posterior predictive distribution.
+
+~~~~
+// Successes in 2 experiments
+var k1 = 0;
+var k2 = 10;
+
+// Number of trials in 2 experiments
+var n1 = 10;
+var n2 = 10;
+
+var model = function() {
+  // Sample rate from uniform distribution
+  var p = uniform( {a:0, b:1} );
+
+  var scr = Binomial({p: p, n: n1}).score(k1) + 
+            Binomial({p: p, n: n2}).score(k2); 
+  
+  factor(scr)
+
+  var posteriorPredictive1 = binomial({p : p, n : n1})
+  var posteriorPredictive2 = binomial({p : p, n : n2})
+
+  return {posterior : p,
+          posteriorPredictive1: posteriorPredictive1,
+          posteriorPredictive2: posteriorPredictive2
+  };
+}
+
+var numSamples = 20000;
+var inferOpts = {
+  method: "MCMC", 
+  samples: numSamples,
+  burn: numSamples/2, 
+  callbacks: [editor.MCMCProgress()] 
+};
+
+var posterior = Infer(inferOpts, model);
+
+viz.marginals(posterior)
+~~~~
+
+### Exercises 2
+
+1.  What do you conclude about the descriptive adequacy of the model, based on the relationship between the observed data and the posterior predictive distribution?
+
+2. What can you conclude about the parameter `theta`?
 
 
 ## A - B testing
