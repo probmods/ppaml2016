@@ -41,8 +41,6 @@ var foreach = function(lst, fn) {
 };
 ///
 
-var personIDs = _.uniq(_.pluck(bannerData, "id"));
-
 var model = function() {
 
   // unknown rates of conversion
@@ -51,27 +49,34 @@ var model = function() {
     green: uniform(0,1)
   };
 
-  foreach(personIDs, function(person_id) {
+  foreach(bannerData, function(personData) {
 
-      var personData = _.where(bannerData, {id: person_id})[0];
+      // grab appropriate conversionRate by condition
+      var acceptanceRate = conversionRates[personData["condition"]];
 
-      var acceptanceRate = conversionRates[personData.condition]
       // people are assumed to be i.i.d. samples
-      var scr = Bernoulli({p:acceptanceRate}).score(personData.converted)
+      var scr = Bernoulli({p:acceptanceRate}).score(personData["converted"]);
 
       factor(scr)
 
-  })
+  });
 
-  return hitRates
+  return conversionRates;
 
 }
-var numSamples = 10000;
-var mcmcOpts = {method: "MCMC", samples: numSamples, burn: numSamples/2, callbacks: [editor.MCMCProgress()] };
 
-var posterior = Infer(mcmcOpts, model)
+var numSamples = 10000;
+var inferOpts = {
+  method: "MCMC", 
+  samples: numSamples,
+  burn: numSamples/2, 
+  callbacks: [editor.MCMCProgress()] 
+};
+
+var posterior = Infer(inferOpts, model);
 
 viz.auto(posterior)
+viz.marginals(posterior)
 ~~~~
 
 You show this analysis to your friend. She is unconvinced by your analysis. She says that GrubWatch gets a lot of *accidental* traffic, because visitors are often interested in a different site **GrubMatch**, the slightly more popular dating website based on common food preferences. She says that dozens of visitors visit and leave your website within a few seconds, after they realize they're not at GrubMatch. She says these people are contaminating the data.
