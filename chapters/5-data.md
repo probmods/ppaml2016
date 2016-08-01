@@ -126,11 +126,11 @@ viz.marginals(posterior)
 
 ## A - B testing
 
-Designing new products for the market is hard. There are many --- hundreds, thousands, ... --- of design decisions along the way. For many of them, your intuition will fail. 
+Designing new products for the market is hard. There are many --- hundreds, thousands, ... --- of design decisions along the way. For many of them, your intuition will fail and you will have to resort to collecting data.
 
-Let's pretend we're building a website (*GrubWatch*) that allows users to log the food they've eaten in the past day and will compute health data for them. Your partner has the intuition that changing the top banner of the webpage from grey to green will increase the attractiveness of the webpage. You are skeptical, however, that the color of the banner would have any effect. Your friend and you decide to allocate the next 200 visitors to this experiment: randomly paint the banner either grey or green. 
+Let's pretend we're building a website --- *GrubWatch* --- that allows users to log the food they've eaten in the past day and will compute health data for them. Your business partner has the intuition that changing the top banner of the webpage from grey to green will increase the attractiveness of the webpage. You are skeptical, however, that the color of the banner would have any effect. Your friend and you decide to allocate the next 200 visitors to this experiment: randomly paint the banner either grey or green. 
 
-This is a what's called an A/B Test (here, a grey/green test). A/B testing is employed in **??product developent??** to determine if one version of a product or website is better than another (better, usually according to how many people end up buying the product or using the webpage). Note that A/B testing is a special case of a psychology experiment: It is testing conditions that are thought to manipulate human behavior. 
+This is a what's called an A/B Test (here, a grey/green test). A/B testing is employed in marketing and business development to determine if one version of a product or website is better than another (better, usually according to how many people end up buying the product or using the webpage). Note that A/B testing is a special case of a psychology experiment: It is testing conditions that are thought to manipulate human behavior. 
 
 
 ## Inferring a rate
@@ -192,7 +192,7 @@ viz.marginals(posterior)
 
 You show this analysis to your friend. She is unconvinced by your analysis. She says that GrubWatch gets a lot of *accidental* traffic, because visitors are often interested in a different site **GrubMatch**, the slightly more popular dating website based on common food preferences. She says that dozens of visitors visit and leave your website within a few seconds, after they realize they're not at GrubMatch. She says these people are contaminating the data.
 
-
+This inspires you to create a build a new model, trying to account for this contamination.
 ~~~~
 ////fold:
 var foreach = function(lst, fn) {
@@ -244,7 +244,7 @@ var model = function() {
 
       factor(scr1)
 
-      var acceptanceRate = (group == "bonafide") ? hitRates[personData.condition] : 0.001
+      var acceptanceRate = (group == "bonafide") ? hitRates[personData.condition] : 0.00001
 
       var scr2 = Bernoulli({p:acceptanceRate}).score(personData.converted)
 
@@ -273,10 +273,7 @@ viz.marginals(posterior)
 - Resources
   - This is a shortened version of MH's BDA course.
   - http://forestdb.org/models/bayesian-data-analysis.html
-    -In contrast to this page, we might want 2-3 real datasets
 -Content
-  - *MH to revise content*
-  -Input/output of data
   - Occam's razor
   - Various models useful for BDA
   - Use BDA to compare two of the models shown earlier on a dataset
