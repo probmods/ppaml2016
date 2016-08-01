@@ -9,8 +9,58 @@ description: "Analyzing data to gain insight into the processes that may have ge
 
 # Bayesian data analysis
 
-Statistical analysis of data is useful for understanding the processes that may have generated that data and to make predictions about new data.
-Bayesian data analysis explicitly posits latent constructs and the generative process of the data. Inference is then performed to *invert* the model: go from data to inferences about latents. In this chapter, we will walk through some basic Bayesian data analysis models, and gradually build more complex models of data.
+Statistical analysis of data is useful for understanding the processes that may have generated that data and to make predictions about new data. Bayesian data analysis is a general purpose data analysis approach for making explicit hypotheses about where the data came from (e.g. the hypothesis that data from 2 experimental conditions came from two different distributions). Inference is then performed to *invert* the model: go from data to inferences about hypotheses. In this chapter, we will walk through some basic Bayesian data analysis models, and gradually build more complex models of data.
+
+## Basics: Parameters and predictives
+
+Bayes’ rule provides a bridge between the unobserved parameters of models and the observed data. The most useful part of this bridge is that data allow us to update the uncertainty, represented by probability distributions, about parameters. But the bridge can handle two-way traffic, and so there is a richer set of possibilities for relating parameters to data. There are really four distributions available, and they are all important and useful.
+
++ First, the *prior distribution over parameters* captures our initial beliefs or state of knowledge about the latent variables they represent.
++ Second, the *prior predictive distribution* tells us what data to expect, given our model and our current state of knowledge. The prior predictive is a distribution over data, and gives the relative probability of different observable outcomes before any data have been seen.
++ Third, the *posterior distribution over parameters* captures what we know about the latent variables having updated the prior information with the evidence provided by data.
++ Fourth, the *posterior predictive distribution* tells us what data to expect, given the same model we started with, but with a current state of knowledge that has been updated by the observed data. Again, the posterior predictive is a distribution over data, and gives the relative probability of different observable outcomes after data have been seen.
+
+### A simple illustration
+
+~~~~
+// Unpack data
+var k = 1 // number of successes
+var n = 15  // number of attempts
+
+var model = function() {
+
+   var p = uniform( {a:0, b:1} );
+
+   // Observed k number of successes
+   var scr = Binomial( {p : p, n: n }).score(k);
+   factor(scr)
+
+   // sample from binomial with updated p
+   var posteriorPredictive = binomial({p : p, n: n});
+  
+   // sample fresh p
+   var prior_p = uniform({ a: 0, b: 1});
+   // sample from binomial with fresh p
+   var priorPredictive = binomial({p : prior_p, n: n})
+
+   return {
+       prior: prior_p, priorPredictive : priorPredictive,
+       posterior : p, posteriorPredictive : posteriorPredictive
+    };
+}
+
+
+var numSamples = 2000;
+var inferOpts = {
+  method: "rejection", 
+  samples: numSamples
+};
+
+var posterior = Infer(inferOpts, model);
+
+viz.marginals(posterior)
+~~~~
+
 
 
 ## A - B testing
