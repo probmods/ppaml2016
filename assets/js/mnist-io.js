@@ -1,10 +1,10 @@
-// get pixels of the full image, binarize, and then downsample to 28 x 28
-// TODO: switch to first downsampling to 20x20, finding bounding box,
-// and then returning a 28x28 image centered on that (as hinted at by the
-// mnist website)
+// - get pixels of the full image
+// - binarize
+// - downsample to 20 x 20
+// - embed center bounding box into 28x28 image
 var extractPixels = function(cv) {
   cv = cv || $('.mnist canvas')[0];
-  var fw = cv.width, fh = cv.height; //224
+  var fw = cv.width, fh = cv.height; //160
 
   var imageData = cv.getContext('2d').getImageData(0,0,fw,fh).data;
   // imageData is a Uint8ClampedArray array with fw * fh * 4 (rgba) elements
@@ -24,10 +24,13 @@ var extractPixels = function(cv) {
     return numOn > numOff ? 1 : 0;
   }
 
-  var pixels = [];
   var n = 8; // TODO: don't hard code
-  for(var r = 0; r < 28; r++) {
-    for (var c = 0; c < 28; c++) {
+
+  var pixelTable = []
+
+  for(var r = 0; r < 20; r++) {
+    var tableRow = [];
+    for (var c = 0; c < 20; c++) {
       // pixel (r,c) in the downsampled image
       // corresponds to the pixels in the full image between
       // (r*n, c*n) to ((r+1)*n - 1, (c+1)*n - 1)
@@ -41,10 +44,69 @@ var extractPixels = function(cv) {
           block.push(binaryPixels[fi]);
         }
       }
-      pixels.push(mode(block));
+      tableRow.push(mode(block));
+    }
+    pixelTable.push(tableRow);
+  }
+
+  var minR = 999, maxR = -1,
+      minC = 999, maxC = -1;
+  for(var r = 0; r < 20; r++) {
+    for (var c = 0; c < 20; c++) {
+      if (pixelTable[r][c]) {
+        if (r < minR) {
+          minR = r
+        }
+        if (r > maxR){
+          maxR = r
+        }
+        if (c < minC) {
+          minC = c
+        }
+        if (c > maxC) {
+          maxC = c
+        }
+      }
     }
   }
-  return pixels;
+
+  // top left corner is [minR, minC]
+  // bottom right corner is [maxR, maxC]
+
+  var bbWidth = maxC - minC + 1;
+  var bbHeight = maxR - minR + 1;
+
+  // calculate offsets for centering 20x20 image
+  var centeringOffsetR = Math.round((20 - bbHeight)/2 - minR);
+  var centeringOffsetC = Math.round((20 - bbWidth)/2 - minC);
+
+  // include offset for embedding in 28x28
+  var offsetR = centeringOffsetR + 4,
+      offsetC = centeringOffsetC + 4;
+
+  var fullPixelTable = [];
+
+  for(var r = 0; r < 28; r++) {
+    var row = [];
+    for(var c = 0; c < 28; c++) {
+      row.push(0);
+    }
+    fullPixelTable.push(row)
+  }
+
+  for(var r = 0; r < 20; r++) {
+    var row = [];
+    for(var c = 0; c < 20; c++) {
+      if (pixelTable[r][c] == 1) {
+        var rPrime = Math.min(27, Math.max(0, r + offsetR));
+        var cPrime = Math.min(27, Math.max(0, c + offsetC));
+
+        fullPixelTable[rPrime][cPrime] = 1;
+      }
+    }
+  }
+
+  return _.flatten(fullPixelTable);
 }
 
 // NB: I'm writing a webppl model here, which I compile later on

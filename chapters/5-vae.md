@@ -20,7 +20,7 @@ Loading:<br />
 </table>
 </div>
 <div class='ready'>
-<canvas width='224' height='224'></canvas>
+<canvas width='160' height='160'></canvas>
 <div class="downsampled"></div>
 <div class="result"><b>Classification</b>: <span></span></div>
 <button class="classify">Classify</button> <button class="clear">Clear</button>
