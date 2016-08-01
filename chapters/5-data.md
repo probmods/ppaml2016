@@ -193,6 +193,7 @@ viz.marginals(posterior)
 You show this analysis to your friend. She is unconvinced by your analysis. She says that GrubWatch gets a lot of *accidental* traffic, because visitors are often interested in a different site **GrubMatch**, the slightly more popular dating website based on common food preferences. She says that dozens of visitors visit and leave your website within a few seconds, after they realize they're not at GrubMatch. She says these people are contaminating the data.
 
 This inspires you to create a build a new model, trying to account for this contamination.
+
 ~~~~
 ////fold:
 var foreach = function(lst, fn) {
