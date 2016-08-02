@@ -279,13 +279,19 @@ var makeLines = function(n, lines, prevScore){
   return (n==1) ? newLines : makeLines(n-1, newLines, newScore);
 }
 
-Infer(
-  {method: 'SMC', particles: 100},
+var numParticles = 100;
+
+var post = Infer(
+  {method: 'SMC', particles: numParticles},
   function(){
-    var lines = makeLines(4, [], 0);
-    var finalGeneratedImage = Draw(50, 50, true);
-	drawLines(finalGeneratedImage, lines);
-   })
+    return makeLines(4, [], 0);
+   });
+
+repeat(numParticles, function() {
+  var finalGeneratedImage = Draw(50, 50, true);
+  var lines = sample(post);
+  drawLines(finalGeneratedImage, lines);
+});
 ~~~~
 
 Try running this program multiple times. Note that while each run produces different outputs, within a run, all of the output particles look extremely similar. We will return to this issue later on in the next section.

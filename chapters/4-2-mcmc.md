@@ -131,23 +131,28 @@ var makeLines = function(n, lines){
   return (n==1) ? newLines : makeLines(n-1, newLines);
 }
 
-var finalImgSampler = Infer(
-  { method: 'MCMC', samples: 500},
+// 'justSample' retains an array of samples as a property of the object
+//    returned from inference
+// samples are {value: , score: } objects
+var post = Infer(
+  { method: 'MCMC', samples: 500, justSample: true},
   function(){
     var lines = makeLines(4, []);
-    var finalGeneratedImage = Draw(50, 50, true);
+    var finalGeneratedImage = Draw(50, 50, false);
     drawLines(finalGeneratedImage, lines);
     var newScore = -targetImage.distance(finalGeneratedImage)/1000;
     factor(newScore);
     return lines
    });
 
-var finalImage = Draw(100, 100, false);
-var finalLines = sample(finalImgSampler);
-drawLines(finalImage, finalLines);
+map(function(samp) {
+  var lines = samp.value;
+  var img = Draw(50, 50, true);
+  drawLines(img, lines);
+}, post.samples);
 ~~~~
 
-This program uses only a single `factor` at the end of `finalImgSampler`, rather than one per each line rendered as in the SMC version. The fact that MCMC supports such a pattern makes it well-suited for programs that invoke complicated, 'black-box' simulations in order to compute likelihoods. It also makes MCMC a good default go-to inference method for most programs.
+This program uses only a single `factor` at the end of `finalImgSampler`, rather than one per each line rendered as in the SMC version. The fact that MCMC supports such a pattern makes it well-suited for programs that invoke complicated, 'black-box' simulations in order to compute likelihoods. It also makes MCMC a good default go-to inference method for most programs. However, note that MCMC has difficulty inferring the position of all four lines, often producing results that have only three correctly positioned. The take-away here: when you can restructure the program to have multiple `factor` statements throughout, as opposed to one at the end, it is often a good idea to do so and to use SMC instead.
 
 ### Custom MH Proposals
 
@@ -275,13 +280,19 @@ var makeLines = function(n, lines, prevScore){
   return (n==1) ? newLines : makeLines(n-1, newLines, newScore);
 }
 
-Infer(
-  {method: 'SMC', particles: 100},
+var numParticles = 100;
+
+var post = Infer(
+  {method: 'SMC', particles: numParticles},
   function(){
-    var lines = makeLines(4, [], 0);
-    var finalGeneratedImage = Draw(50, 50, true);
-	drawLines(finalGeneratedImage, lines);
-   })
+    return makeLines(4, [], 0);
+   });
+
+repeat(numParticles, function() {
+  var finalGeneratedImage = Draw(50, 50, true);
+  var lines = sample(post);
+  drawLines(finalGeneratedImage, lines);
+});
 ~~~~
 
 We observed before that the posterior samples from this program are all nearly identical. One way to combat this problem is to run MCMC for a small number of steps after each particle resampling step; this process is often termed 'particle rejuvenation'. To apply this technique in WebPPL, just provide an integer greater than zero to the `rejuvSteps` option for SMC:
@@ -319,13 +330,19 @@ var makeLines = function(n, lines, prevScore){
 }
 ///
 
-Infer(
-  {method: 'SMC', particles: 100, rejuvSteps: 4},
+var numParticles = 100;
+
+var post = Infer(
+  {method: 'SMC', particles: numParticles, rejuvSteps: 10},
   function(){
-    var lines = makeLines(4, [], 0);
-    var finalGeneratedImage = Draw(50, 50, true);
-	drawLines(finalGeneratedImage, lines);
-   })
+    return makeLines(4, [], 0);
+   });
+
+repeat(numParticles, function() {
+  var finalGeneratedImage = Draw(50, 50, true);
+  var lines = sample(post);
+  drawLines(finalGeneratedImage, lines);
+});
 ~~~~
 
 You can also rejuvenate with HMC, by specifying HMC as the `rejuvKernel` option. See the WebPPL [documentation](http://docs.webppl.org/en/master/inference.html#smc) for more information.
