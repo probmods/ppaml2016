@@ -11,6 +11,8 @@ description: "Analyzing data to gain insight into the processes that may have ge
 
 Statistical analysis of data is useful for understanding the processes that may have generated that data and to make predictions about new data. Bayesian data analysis is a general purpose data analysis approach for making explicit hypotheses about where the data came from (e.g. the hypothesis that data from 2 experimental conditions came from two different distributions). Inference is then performed to *invert* the model: go from data to inferences about hypotheses. In this chapter, we will walk through some basic Bayesian data analysis models, and gradually build more complex models of data.
 
+Many of the examples and explanations of basic concepts are borrowed from Lee & Wagenmakers (2013) [[link]](https://bayesmodels.com/).
+
 ## Basics: Parameters and predictives
 
 Bayes’ rule provides a bridge between the unobserved parameters of models and the observed data. The most useful part of this bridge is that data allow us to update the uncertainty, represented by probability distributions, about parameters. But the bridge can handle two-way traffic, and so there is a richer set of possibilities for relating parameters to data. There are really four distributions available, and they are all important and useful.
@@ -31,9 +33,8 @@ var model = function() {
 
    var p = uniform( {a:0, b:1} );
 
-   // Observed k number of successes
-   var scr = Binomial( {p : p, n: n }).score(k);
-   factor(scr)
+   // Observed k number of successes, assuming a binomial
+   observe(Binomial({p : p, n: n}), k)
 
    // sample from binomial with updated p
    var posteriorPredictive = binomial({p : p, n: n});
@@ -48,7 +49,6 @@ var model = function() {
        posterior : p, posteriorPredictive : posteriorPredictive
     };
 }
-
 
 var numSamples = 2000;
 var inferOpts = {
@@ -94,6 +94,10 @@ var model = function() {
             Binomial({p: p, n: n2}).score(k2);
 
   factor(scr)
+
+  // alternatively:
+  // observe(Binomial({p: p, n: n1}), k1);
+  // observe(Binomial({p: p, n: n2}), k2);
 
   var posteriorPredictive1 = binomial({p : p, n : n1})
   var posteriorPredictive2 = binomial({p : p, n : n2})

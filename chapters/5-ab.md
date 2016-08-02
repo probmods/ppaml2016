@@ -47,10 +47,8 @@ var model = function() {
       // grab appropriate conversionRate by condition
       var acceptanceRate = conversionRates[personData["condition"]];
 
-      // people are assumed to be i.i.d. samples
-      var scr = Bernoulli({p:acceptanceRate}).score(personData["converted"]);
-
-      factor(scr)
+      // visitors are i.i.d.
+      observe(Bernoulli({p:acceptanceRate}), personData["converted"])
 
   });
 
@@ -115,15 +113,11 @@ var model = function() {
 
       var group = flip(probBonafide) ? "bonafide" : "accidental";
 
-      var scr1 = Gaussian({mu: logTimes[group], sigma: sigmas[group]}).score(personData.time)
-
-      factor(scr1)
+      observe(Gaussian({mu: logTimes[group], sigma: sigmas[group]}), personData.time)
 
       var acceptanceRate = (group == "bonafide") ? conversionRates[personData.condition] : 0.001
 
-      var scr2 = Bernoulli({p:acceptanceRate}).score(personData.converted)
-
-      factor(scr2)
+      observe(Bernoulli({p:acceptanceRate}), personData.converted)
 
   } )
 
