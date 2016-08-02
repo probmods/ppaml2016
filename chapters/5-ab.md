@@ -31,8 +31,10 @@ var head = function(ar, l){
 head(bannerData)
 
 // show all the ids
-// print(_.pluck(bannerData, "id"))
+print(_.pluck(bannerData, "id"))
 
+// how many people saw each banner?
+viz.table(_.pluck(bannerData, "condition"))
 ~~~~
 
 Your friend thinks that conversion rate is going to be higher for the group that has a green banner than for the group with the grey banner.Concretely, we are interested in the rate of conversion for the two groups:
@@ -177,12 +179,10 @@ var model = function() {
 
 }
 
-var numSamples = 10000;
+var numSamples = 100000;
 var posterior = Infer({method: "incrementalMH", 
-                       samples: numSamples, 
-                       burn: numSamples/2,
-                   		verbose: true,
-                   		verboseLag: numSamples/20}, 
+                       samples: numSamples, burn: numSamples/2,
+                   		verbose: true, verboseLag: numSamples/10}, 
                       model)
 
 // run a big model: takes about 1 minute
