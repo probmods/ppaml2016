@@ -20,24 +20,23 @@ description: "Modeling agent behaviors as probabilistic programs."
 - [Sequential decision-making, part 2](http://agentmodels.org/chapters/3b-mdp-gridworld.html)
   - Policies
   - Expected action values
+  - A neat example: visualizing planned trajectories for a [hyperbolic agent](http://agentmodels.org/chapters/5b-time-inconsistency.html)
 
 - [Multi-agent scenarios](http://agentmodels.org/chapters/7-multi-agent.html)
   - Schelling coordination games
-  - Language understanding: scalar implicature
   - Game playing: tic-tac-toe
+  - Language understanding: scalar implicature  
+
+Advanced topics:
 
 - [Agents learning from observations](http://agentmodels.org/chapters/3c-pomdp.html)
   - POMDPs
   - Expected utility of state recursion
   - Bandit problems
   - [Scalar implicature with beliefs](http://forestdb.org/models/scalar-implicature.html)
-
-Other topics:
-
 - [Biased and bounded agents, intro](http://agentmodels.org/chapters/5-biases-intro.html)
 - [Hyperbolic discounting](http://agentmodels.org/chapters/5a-time-inconsistency.html)
 - [Myopic planning](http://agentmodels.org/chapters/5c-myopic.html)
-  - A neat example: visualizing planned trajectories for a [hyperbolic agent](http://agentmodels.org/chapters/5b-time-inconsistency.html)
 - Reasoning about agents
   - [Inferring beliefs from observed behavior](http://agentmodels.org/chapters/4-reasoning-about-agents.html)
   - Inferring preferences
