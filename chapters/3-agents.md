@@ -25,7 +25,9 @@ description: "Modeling agent behaviors as probabilistic programs."
 - [Multi-agent scenarios](http://agentmodels.org/chapters/7-multi-agent.html)
   - Schelling coordination games
   - Game playing: tic-tac-toe
-  - Language understanding: scalar implicature  
+  - Language understanding
+    - Scalar implicature
+    - [Hyperbole](3-1-hyperbole.html)
 
 Advanced topics:
 
