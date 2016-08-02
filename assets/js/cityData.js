@@ -2,7 +2,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.4961,
+  "time": 32.986553211988614,
   "browser": "firefox",
   "condition": "green",
   "converted": true,
@@ -11,7 +11,7 @@ var bannerData = [
  {
   "city": "houston",
   "state": "texas",
-  "time": 0.6657,
+  "time": 1.945852141213124,
   "browser": "ie",
   "condition": "green",
   "converted": false,
@@ -20,7 +20,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 0.0009,
+  "time": 1.0009004051215273,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -29,7 +29,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.6809,
+  "time": 39.68209188884563,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -38,7 +38,7 @@ var bannerData = [
  {
   "city": "tuskegee",
   "state": "alabama",
-  "time": 5.3369,
+  "time": 207.86732175627463,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -47,7 +47,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 2.2072,
+  "time": 9.090228087420018,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -56,7 +56,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 3.1225,
+  "time": 22.703066421231547,
   "browser": "opera",
   "condition": "grey",
   "converted": true,
@@ -65,7 +65,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 3.8693,
+  "time": 47.908838153707045,
   "browser": "opera",
   "condition": "grey",
   "converted": true,
@@ -74,7 +74,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 2.0019,
+  "time": 7.403108651215814,
   "browser": "firefox",
   "condition": "green",
   "converted": true,
@@ -83,7 +83,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.4458,
+  "time": 31.36836810595259,
   "browser": "chrome",
   "condition": "grey",
   "converted": false,
@@ -92,7 +92,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 2.9102,
+  "time": 18.360470293891776,
   "browser": "firefox",
   "condition": "grey",
   "converted": false,
@@ -101,7 +101,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.0181,
+  "time": 20.45239519336062,
   "browser": "safari",
   "condition": "grey",
   "converted": true,
@@ -110,7 +110,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 4.657,
+  "time": 105.31964879755316,
   "browser": "opera",
   "condition": "grey",
   "converted": false,
@@ -119,7 +119,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 1.7385,
+  "time": 5.68880381384578,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -128,7 +128,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": -0.2129,
+  "time": 0.8082369568711255,
   "browser": "safari",
   "condition": "grey",
   "converted": false,
@@ -137,7 +137,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.742,
+  "time": 42.182270397465956,
   "browser": "firefox",
   "condition": "grey",
   "converted": false,
@@ -146,7 +146,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 2.863,
+  "time": 17.51399017289679,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -155,7 +155,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 4.3338,
+  "time": 76.23342387109543,
   "browser": "ie",
   "condition": "grey",
   "converted": true,
@@ -164,7 +164,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 1.6524,
+  "time": 5.219491586871066,
   "browser": "ie",
   "condition": "green",
   "converted": false,
@@ -173,7 +173,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 0.0731,
+  "time": 1.075838115347227,
   "browser": "opera",
   "condition": "green",
   "converted": false,
@@ -182,7 +182,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 2.5001,
+  "time": 12.183712271014045,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -191,7 +191,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.4201,
+  "time": 30.572472115404494,
   "browser": "safari",
   "condition": "grey",
   "converted": false,
@@ -200,7 +200,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.7437,
+  "time": 42.25404124507731,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -209,7 +209,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.9506,
+  "time": 51.96653740516833,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -218,7 +218,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 3.432,
+  "time": 30.938457829651345,
   "browser": "ie",
   "condition": "green",
   "converted": true,
@@ -227,7 +227,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 5.1322,
+  "time": 169.38936502612572,
   "browser": "chrome",
   "condition": "grey",
   "converted": true,
@@ -236,7 +236,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 4.5767,
+  "time": 97.19312708846627,
   "browser": "firefox",
   "condition": "green",
   "converted": true,
@@ -245,7 +245,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 2.3565,
+  "time": 10.55394791631291,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -254,7 +254,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 2.5453,
+  "time": 12.747051627993963,
   "browser": "safari",
   "condition": "green",
   "converted": false,
@@ -263,7 +263,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 4.5489,
+  "time": 94.52836989739784,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -272,7 +272,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 2.9941,
+  "time": 19.96738115759933,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -281,7 +281,7 @@ var bannerData = [
  {
   "city": "tuskegee",
   "state": "alabama",
-  "time": 3.862,
+  "time": 47.56037706561277,
   "browser": "firefox",
   "condition": "green",
   "converted": true,
@@ -290,7 +290,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.9549,
+  "time": 52.190474636006996,
   "browser": "safari",
   "condition": "grey",
   "converted": true,
@@ -299,7 +299,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 4.207,
+  "time": 67.15477299223814,
   "browser": "safari",
   "condition": "grey",
   "converted": false,
@@ -308,7 +308,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 2.4722,
+  "time": 11.848484866033814,
   "browser": "chrome",
   "condition": "grey",
   "converted": false,
@@ -317,7 +317,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.1506,
+  "time": 23.35007042102313,
   "browser": "firefox",
   "condition": "green",
   "converted": true,
@@ -326,7 +326,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.0937,
+  "time": 22.0585437830784,
   "browser": "safari",
   "condition": "grey",
   "converted": false,
@@ -335,7 +335,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.3214,
+  "time": 27.699102169096655,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -344,7 +344,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.5131,
+  "time": 33.55211829920687,
   "browser": "safari",
   "condition": "green",
   "converted": false,
@@ -353,7 +353,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 4.7772,
+  "time": 118.77132431828228,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -362,7 +362,7 @@ var bannerData = [
  {
   "city": "tuskegee",
   "state": "alabama",
-  "time": 3.4812,
+  "time": 32.49869712270593,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -371,7 +371,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 1.7026,
+  "time": 5.48819817293332,
   "browser": "ie",
   "condition": "grey",
   "converted": true,
@@ -380,7 +380,7 @@ var bannerData = [
  {
   "city": "tuskegee",
   "state": "alabama",
-  "time": 5.1109,
+  "time": 165.8195253097432,
   "browser": "chrome",
   "condition": "grey",
   "converted": true,
@@ -389,7 +389,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.0948,
+  "time": 22.08282153155343,
   "browser": "ie",
   "condition": "grey",
   "converted": false,
@@ -398,7 +398,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 0.3664,
+  "time": 1.4425321401233797,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -407,7 +407,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 4.0567,
+  "time": 57.78331117557171,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -416,7 +416,7 @@ var bannerData = [
  {
   "city": "tuskegee",
   "state": "alabama",
-  "time": 1.9507,
+  "time": 7.0336093843260405,
   "browser": "opera",
   "condition": "grey",
   "converted": false,
@@ -425,7 +425,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": -0.1632,
+  "time": 0.8494212871675983,
   "browser": "chrome",
   "condition": "grey",
   "converted": false,
@@ -434,7 +434,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 0.9053,
+  "time": 2.47267361388245,
   "browser": "firefox",
   "condition": "green",
   "converted": false,
@@ -443,7 +443,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.4968,
+  "time": 33.00965188282861,
   "browser": "ie",
   "condition": "grey",
   "converted": false,
@@ -452,7 +452,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 1.4432,
+  "time": 4.234223676642605,
   "browser": "safari",
   "condition": "green",
   "converted": false,
@@ -461,7 +461,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 4.1289,
+  "time": 62.10956482338658,
   "browser": "safari",
   "condition": "grey",
   "converted": false,
@@ -470,7 +470,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 5.1216,
+  "time": 167.6033205160509,
   "browser": "firefox",
   "condition": "grey",
   "converted": false,
@@ -479,7 +479,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 0.1953,
+  "time": 1.2156756344801416,
   "browser": "ie",
   "condition": "green",
   "converted": false,
@@ -488,7 +488,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 1.0029,
+  "time": 2.726176287194043,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -497,7 +497,7 @@ var bannerData = [
  {
   "city": "tuskegee",
   "state": "alabama",
-  "time": -0.548,
+  "time": 0.5781048646705196,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -506,7 +506,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 0.5789,
+  "time": 1.7840748686334047,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -515,7 +515,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 2.718,
+  "time": 15.149991940878163,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -524,7 +524,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 4.3328,
+  "time": 76.1572285512338,
   "browser": "safari",
   "condition": "grey",
   "converted": false,
@@ -533,7 +533,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 4.6614,
+  "time": 105.78407624336727,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -542,7 +542,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 0.7738,
+  "time": 2.167988978832211,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -551,7 +551,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 5.2732,
+  "time": 195.0390899975662,
   "browser": "ie",
   "condition": "green",
   "converted": true,
@@ -560,7 +560,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 3.3802,
+  "time": 29.376645854966675,
   "browser": "chrome",
   "condition": "grey",
   "converted": true,
@@ -569,7 +569,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 5.849,
+  "time": 346.88731965758825,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -578,7 +578,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 4.7546,
+  "time": 116.11719699498673,
   "browser": "firefox",
   "condition": "grey",
   "converted": false,
@@ -587,7 +587,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 1.3191,
+  "time": 3.7400538136522625,
   "browser": "ie",
   "condition": "green",
   "converted": false,
@@ -596,7 +596,7 @@ var bannerData = [
  {
   "city": "houston",
   "state": "texas",
-  "time": 3.0892,
+  "time": 21.95950334417276,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -605,7 +605,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 1.5388,
+  "time": 4.658996119824936,
   "browser": "safari",
   "condition": "green",
   "converted": false,
@@ -614,7 +614,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 5.2492,
+  "time": 190.41387640881064,
   "browser": "firefox",
   "condition": "grey",
   "converted": false,
@@ -623,7 +623,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 5.7974,
+  "time": 329.4418964994672,
   "browser": "firefox",
   "condition": "grey",
   "converted": false,
@@ -632,7 +632,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": -0.2289,
+  "time": 0.7954080703352197,
   "browser": "chrome",
   "condition": "grey",
   "converted": false,
@@ -641,7 +641,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 0.3889,
+  "time": 1.4753570082551986,
   "browser": "firefox",
   "condition": "green",
   "converted": false,
@@ -650,7 +650,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 5.2537,
+  "time": 191.27266968831597,
   "browser": "ie",
   "condition": "green",
   "converted": true,
@@ -659,7 +659,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.9283,
+  "time": 50.8205093260799,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -668,7 +668,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 3.8459,
+  "time": 46.800786109777626,
   "browser": "ie",
   "condition": "grey",
   "converted": false,
@@ -677,7 +677,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 2.4942,
+  "time": 12.112040009695118,
   "browser": "chrome",
   "condition": "grey",
   "converted": false,
@@ -686,7 +686,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 0.9166,
+  "time": 2.5007732898854056,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
@@ -695,7 +695,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 4.3349,
+  "time": 76.31732677549083,
   "browser": "chrome",
   "condition": "grey",
   "converted": false,
@@ -704,7 +704,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 2.1861,
+  "time": 8.90043364759524,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -713,7 +713,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": -0.5162,
+  "time": 0.5967840239330953,
   "browser": "safari",
   "condition": "green",
   "converted": false,
@@ -722,7 +722,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 3.8299,
+  "time": 46.05793221069606,
   "browser": "opera",
   "condition": "green",
   "converted": false,
@@ -731,7 +731,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 5.1748,
+  "time": 176.76125848927367,
   "browser": "firefox",
   "condition": "green",
   "converted": true,
@@ -740,7 +740,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.8127,
+  "time": 45.272509772823504,
   "browser": "chrome",
   "condition": "grey",
   "converted": true,
@@ -749,7 +749,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 0.0732,
+  "time": 1.0759457045381315,
   "browser": "safari",
   "condition": "green",
   "converted": false,
@@ -758,7 +758,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 2.11,
+  "time": 8.24824128462666,
   "browser": "chrome",
   "condition": "grey",
   "converted": true,
@@ -767,7 +767,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.7339,
+  "time": 41.84197406794918,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -776,7 +776,7 @@ var bannerData = [
  {
   "city": "seattle",
   "state": "washington",
-  "time": 2.4514,
+  "time": 11.60458176651168,
   "browser": "firefox",
   "condition": "grey",
   "converted": true,
@@ -785,7 +785,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.2831,
+  "time": 26.658285423886866,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -794,7 +794,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 3.9645,
+  "time": 52.69391584388798,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -803,7 +803,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 2.1735,
+  "time": 8.788991742013216,
   "browser": "safari",
   "condition": "green",
   "converted": false,
@@ -812,7 +812,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 5.3385,
+  "time": 208.2001756832173,
   "browser": "chrome",
   "condition": "grey",
   "converted": false,
@@ -821,7 +821,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 1.6594,
+  "time": 5.256156204426876,
   "browser": "opera",
   "condition": "green",
   "converted": false,
@@ -830,7 +830,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 4.7331,
+  "time": 113.64732354008548,
   "browser": "firefox",
   "condition": "green",
   "converted": true,
@@ -839,7 +839,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 4.5317,
+  "time": 92.91638474805816,
   "browser": "safari",
   "condition": "grey",
   "converted": false,
@@ -848,7 +848,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 4.5934,
+  "time": 98.82988116805622,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -857,7 +857,7 @@ var bannerData = [
  {
   "city": "portland",
   "state": "oregon",
-  "time": 6.1109,
+  "time": 450.7442024531797,
   "browser": "ie",
   "condition": "grey",
   "converted": true,
@@ -866,7 +866,7 @@ var bannerData = [
  {
   "city": "boston",
   "state": "massachusetts",
-  "time": 3.9633,
+  "time": 52.63072106932341,
   "browser": "chrome",
   "condition": "grey",
   "converted": true,
@@ -875,7 +875,7 @@ var bannerData = [
  {
   "city": "austin",
   "state": "texas",
-  "time": 3.7855,
+  "time": 44.05769389940563,
   "browser": "chrome",
   "condition": "green",
   "converted": true,
@@ -884,7 +884,7 @@ var bannerData = [
  {
   "city": "san francisco",
   "state": "california",
-  "time": 4.046,
+  "time": 57.168325785293,
   "browser": "safari",
   "condition": "green",
   "converted": true,
@@ -893,7 +893,7 @@ var bannerData = [
  {
   "city": "tuskegee",
   "state": "alabama",
-  "time": 1.789,
+  "time": 5.983466007644971,
   "browser": "chrome",
   "condition": "green",
   "converted": false,
