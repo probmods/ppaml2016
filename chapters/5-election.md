@@ -66,35 +66,29 @@ function(_x) {
 
     return sign*y;
 }
-///
 
 var gaussianCDF = function(x, mu, sigma) {
   return 0.5 * (1 + erf((x - mu) / (sigma * Math.sqrt(2))))
 }
+///
 
-// arizona results, adapted from
-// http://elections.huffingtonpost.com/pollster/2016-arizona-president-trump-vs-clinton
-// ppp 276, 304
-// oh  498, 455
-// gqr 129, 144
-// ppp 340, 358
-// bhr 236, 197
-var p0 = 1+276+498+129+340+236; // 1480
-var p1 = 1+304+455+144+358+197; // 1459
+var p0 = 1+276;
+var p1 = 1+304;
 var simulateResult = function() {
   var p = beta(p0, p1); // use conjugacy
 
-  // gaussian approximation to binomial
-  var n = 2400000; // 2012 turnout, roughly
+  // gaussian approximation to binomial because binomial with large n is slow
+  var n = 2400000; // 2012 turnout
   var np = n * p;
 
   // use cdf to sample a winner rather than explicitly sampling a number of votes
-  var clintonWinProb = (1 - gaussianCDF(n/2, np, np * (1-p) * p));
+  var clintonWinProb = (1 - gaussianCDF(n/2, np, Math.sqrt(np * (1-p))));
+  //var winner = flip(clintonWinProb) ? "clinton" : "trump";
 
-  return clintonWinProb;
+  return clintonWinProb
 }
 
-expectation(Infer({method: 'forward', samples: 2e5}, simulateResult))
+expectation(Infer({method: 'forward', samples: 1e5}, simulateResult))
 ~~~~
 
 This implementation is nice because it is fast, but it also has disadvantages.
