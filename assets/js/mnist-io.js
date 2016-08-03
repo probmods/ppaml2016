@@ -135,7 +135,6 @@ var encoderProgram = function() {
   return {mu: mu, sigma: sigma};
 }
 
-// TODO: will have to switch to the compile-prepare-run stratey once #570 is merged
 var encoder = eval.call({},
                         webppl.compile(['(',encoderProgram.toString(),')()'].join('')));
 
