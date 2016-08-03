@@ -145,7 +145,7 @@ viz.marginals(posterior)
   - Making predictions from data -->
 
 
-## "The Full Bayesian Thing" (Bayesian data analysis of Bayesian cognitive models )
+## "The Full Bayesian Thing" (Bayesian data analysis of Bayesian models)
 
 [link]({{ "/chapters/5-bdaBCM.html" | prepend: site.baseurl }})
 

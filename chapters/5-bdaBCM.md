@@ -1,9 +1,10 @@
 ---
 layout: subchapter
-title: Data - analysis of cognitive model
+title: The Full Bayesian Thing
 ---
 
-*To Run*: Copy to codebox on [agentmodels.org](http://agentmodels.org/chapters/4-reasoning-about-agents.html)
+# Bayesian data analysis of a Bayesian model
+**To Run**: Copy to codebox on [agentmodels.org](http://agentmodels.org/chapters/4-reasoning-about-agents.html)
 
 ~~~~
 var actions = ['italian', 'french'];
