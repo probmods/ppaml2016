@@ -63,7 +63,7 @@ viz.marginals(posterior)
 
 ### Exercises
 
-1. Make sure you understand the prior, posterior, prior predictive, and posterior predictive distributions, and how they relate to each other (why are some plots densities and others bar graphs?). Understanding these ideas is a key to understanding Bayesian analysis. Check your understanding by trying other data sets, varying both k and n.
+1. Make sure you understand the prior, posterior, prior predictive, and posterior predictive distributions, and how they relate to each other. Why are some plots densities and others bar graphs? Understanding these ideas is a key to understanding Bayesian analysis. Check your understanding by trying other data sets, varying both k and n.
 
 2. Try different priors on `theta`, by changing `theta = uniform(0, 1)` to `theta = beta(10,10)`, `beta(1,5)` and `beta(0.1,0.1)`. Use the figures produced to understand the assumptions these priors capture, and how they interact with the same data to produce posterior inferences and predictions.
 
@@ -73,7 +73,6 @@ viz.marginals(posterior)
 ## Posterior prediction and model checking
 
 One important use of posterior predictive distributions is to examine the descriptive adequacy of a model. It can be viewed as a set of predictions about what data the model expects to see, based on the posterior distribution over parameters. If these predictions do not match the data already seen, the model is descriptively inadequate.
-
 
 The model below has k1 = 0 successes out of n1 = 10 observations, and k2 = 10 successes out of n2 = 10 observations. The code draws the posterior distribution for the rate and the posterior predictive distribution.
 
@@ -145,6 +144,10 @@ viz.marginals(posterior)
     - text analysis models (topic models, hmms, etc)
   - Making predictions from data -->
 
+
+## "The Full Bayesian Thing" (Bayesian data analysis of Bayesian cognitive models )
+
+[link]({{ "/chapters/5-bdaBCM.html" | prepend: site.baseurl }})
 
 # Making predictions from data
 
