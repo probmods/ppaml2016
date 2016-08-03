@@ -94,7 +94,7 @@ expectation(Infer({method: 'forward', samples: 1e5}, simulateResult))
 This implementation is nice because it is fast, but it also has disadvantages.
 Can you think of any?
 
-# Extending to undecided voters: a time-varying model
+# A time-varying model
 
 ~~~~
 var dist0 = {
@@ -122,7 +122,6 @@ var step = function(curDist) {
     r: r - leaversR + joinersR,
     u: u - joiners + leaversR + leaversD
   }
-
 }
 
 var evolve = function(dists, steps) {
@@ -137,17 +136,11 @@ var evolve = function(dists, steps) {
 
 var steps = 5;
 var path = evolve([dist0], steps);
-// sanity check: normalization // map(function(d) { return sum(_.values(d)) }, path)
 
-// munge data for viz
-// {d: 100, r: 200, u: 300}
 var vdist = _.flatten(mapIndexed(function(t, dist) {
-  var keys = _.keys(dist),
-      vals = _.values(dist);
-  // TODO: make viz.line invariant to the ordering here if we specify groupBy
+  var keys = _.keys(dist), vals = _.values(dist);
   return map2(function(k,v) { return {time: t, fraction: v, group: k} }, keys, vals)
-}, path))
-
+}, path));
 
 print('support for dems, reps, or undecided over time')
 viz.line(vdist, {groupBy: 'group'})
@@ -159,11 +152,73 @@ viz.line(_.range(steps+1),
          map2(function(d,r) { d / (d + r) }, ds, rs))
 ~~~~
 
-other notes:
+later polls are more accurate than earlier polls:
 
-- could be useful to know their demographics, says the [nyt], but that's about senate elections
-- the fact that they are undecided suggests that maybe, as a group, their actual decisions will be less peaked than the early-deciders (could do this as a softmax on the decided polls and try to learn alpha)
-- integrate with discrete-time drift process (using particle filter)
+~~~~
+///fold:
+var dist0 = {
+  d: 0.47,
+  r: 0.43,
+  u: 0.10,
+};
 
+var alpha = 200;
 
-[nyt]: http://www.nytimes.com/2014/11/05/upshot/the-secret-about-undecided-voters-theyre-predictable.html?_r=0
+var step = function(curDist) {
+  var d = curDist.d, r = curDist.r, u = curDist.u;
+
+  var joiners  = uniform(0, 0.2  ) * u;
+  var leaversD = uniform(0, 0.001) * d;
+  var leaversR = uniform(0, 0.001) * r;
+
+  // assume that the deciders noisily mirror the people who have already decided
+  var joinerSides = dirichlet(T.mul(Vector(_.values(_.omit(curDist, 'u'))), alpha)),
+      joinersD = T.get(joinerSides, 0) * joiners,
+      joinersR = T.get(joinerSides, 1) * joiners;
+
+  return {
+    d: d - leaversD + joinersD,
+    r: r - leaversR + joinersR,
+    u: u - joiners + leaversR + leaversD
+  }
+}
+
+var evolve = function(dists, steps) {
+  if (steps == 0) {
+    return dists
+  } else {
+    var curDist = _.last(dists),
+        nextDist = step(curDist);
+    return evolve(dists.concat(nextDist), steps - 1)
+  }
+}
+
+var steps = 5;
+///
+
+var doPoll = function(pref, size) {
+  _.object(_.keys(pref),
+           multinomial({ps: _.values(pref), n: size}))
+}
+
+var KL = function(pProbs, qProbs) {
+  return sum(map2(function(p, q) { p === 0 ? 0 : p * (Math.log(p) - Math.log(q)); },
+                  pProbs,
+                  qProbs))
+}
+
+var pollsDist = Infer(
+  {method: 'SMC', particles: 400},
+  function() {
+    var path = evolve([dist0], 5);
+
+    var poll0 = doPoll(path[0], 100);
+    var poll3 = doPoll(path[3], 100);
+    var goodness0 = -1 * KL(_.values(poll0), _.values(_.last(path)));
+    var goodness3 = -1 * KL(_.values(poll3), _.values(_.last(path)));
+
+    return {"relative quality of poll 3": goodness3 - goodness0}
+});
+
+viz.auto(pollsDist);
+~~~~
