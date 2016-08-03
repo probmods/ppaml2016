@@ -69,3 +69,9 @@ var posterior = Infer(inferOpts, dataAnalysisModel);
 
 viz.auto(posterior);
 ~~~~
+
+
+Check out: 
+
++ Prior predictive
++ What if your model is wrong? (switch agent's beliefs about utilities)
