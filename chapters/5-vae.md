@@ -102,41 +102,52 @@ var number7 = Vector([1,1,1,
                       0,0,1,
                       0,1,0])
 
-var data = append(repeat(100, function() { letterL }),
-                  repeat(100, function() { number7 }))
+var data = append(repeat(50, function() { letterL }),
+                  repeat(50, function() { number7 }))
 
 var observe = function(dist, x) {
   factor(dist.score(x))
 }
 
+// note to self: currently, if distribution is parameterized by
+// reals or tensors, we have an auto guide
+var sampleMatrix = ///fold:
+function() {
+  var mu = zeros([18,1]);
+  var sigma = ones([18,1]);
+  T.reshape(sample(DiagCovGaussian({mu: mu, sigma: sigma})),
+            [9,2])
+}
+///
+
 var model = function() {
-  var W = sample(TensorGaussian({mu: 0, sigma: 1, dims: [9, 2]}));
+
+  var W = sampleMatrix();
   var f = function(z) { T.sigmoid(T.dot(W, z));  };
 
   var zs = map(function(x) {
-    var z = sample(TensorGaussian({mu: 0, sigma: 1, dims: [2, 1]}));
+    var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}));
     var probs = f(z);
     factor(MultivariateBernoulli({ps: probs}).score(x));
     return z;
   }, data);
 
-  // return a sampler for a new code z
-  var newZ = sample(TensorGaussian({mu: 0, sigma: 1, dims: [2, 1]}));
-  var newProbs = f(newZ);
-  return newProbs
+  return {W: W, zs: zs}
 };
 
 util.seedRNG(1)
-var dist = Infer({method: 'MCMC',
-                  kernel: 'HMC',
-                  samples: 500,
-                  callbacks: [wpEditor.MCMCProgress()]
+var dist = Infer({method: 'optimize',
+                  optMethod: {adam: {stepSize: 0.1}},
+                  steps: 150
                  }, model)
 
-repeat(10, function() {
-  printPixels(dist.sample())
-  print('--------')
-})
+var out = dist.sample();
+var W = out.W;
+var someZs = repeat(10, function() { uniformDraw(out.zs) })
+map(function(z) {
+  printPixels(T.sigmoid(T.dot(W, z)))
+  print('---------')
+}, someZs)
 ~~~~
 
 inference should work... but how well?
@@ -145,7 +156,7 @@ inference should work... but how well?
 * a straight-forward application of vi has *lots* of parameters to
   optimize. means and variances of the nn weights, means and variances
   of a z for each data point.
-* what else?...
+*what else?...
 
 (note the vi doesn't work on the model at this point because `TensorGaussian` can't be guided automatically. i can fix that if we'd like to show it?)
 
