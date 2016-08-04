@@ -15,14 +15,18 @@ Many of the examples and explanations of basic concepts are borrowed from [Lee &
 
 ## Basics: Parameters and predictives
 
-Bayes’ rule provides a bridge between the unobserved parameters of models and the observed data. The most useful part of this bridge is that data allow us to update the uncertainty, represented by probability distributions, about parameters. But the bridge can handle two-way traffic, and so there is a richer set of possibilities for relating parameters to data. There are really four distributions available, and they are all important and useful.
+Bayes’ rule provides a bridge between the unobserved parameters of models and the observed data. The most useful part of this bridge is that data allow us to update the uncertainty, represented by probability distributions, about parameters. But the bridge can handle two-way traffic, and so there is a richer set of possibilities for relating parameters to data. For a given Bayesian model (together with data), there are four conceptually distinct distributions:
 
-+ First, the *prior distribution over parameters* captures our initial beliefs or state of knowledge about the latent variables they represent.
++ First, the *prior distribution over parameters* captures our initial beliefs or state of knowledge about the latent variables those parameters represent.
 + Second, the *prior predictive distribution* tells us what data to expect, given our model and our current state of knowledge. The prior predictive is a distribution over data, and gives the relative probability of different observable outcomes before any data have been seen.
 + Third, the *posterior distribution over parameters* captures what we know about the latent variables having updated the prior information with the evidence provided by data.
 + Fourth, the *posterior predictive distribution* tells us what data to expect, given the same model we started with, but with a current state of knowledge that has been updated by the observed data. Again, the posterior predictive is a distribution over data, and gives the relative probability of different observable outcomes after data have been seen.
 
+Loosely speaking, *predictive* distribuions are in "data space" and *parameter* distributions are in "latent space".
+
 ### A simple illustration
+
+Here, we explore the result of an experiment with 15 trials and binary outcomes (e.g., flipping a coin with an uncertain weight, asking people if they'll vote for Hillary Clinton or Donald Trump, ...)
 
 ~~~~
 // Unpack data
@@ -72,9 +76,9 @@ viz.marginals(posterior)
 
 ## Posterior prediction and model checking
 
-One important use of posterior predictive distributions is to examine the descriptive adequacy of a model. It can be viewed as a set of predictions about what data the model expects to see, based on the posterior distribution over parameters. If these predictions do not match the data already seen, the model is descriptively inadequate.
+One important use of posterior predictive distributions is to examine the descriptive adequacy of a model. The posterior predictive can be viewed as a set of predictions about what data the model expects to see, based on the posterior distribution over parameters. If these predictions do not match the data *already seen*, the model is descriptively inadequate.
 
-The model below has k1 = 0 successes out of n1 = 10 observations, and k2 = 10 successes out of n2 = 10 observations. The code draws the posterior distribution for the rate and the posterior predictive distribution.
+Let's say we ran 2 experiments that we believe are conceptually the same (e.g., asking 10 people whether or not they would vote for "Hillary Clinton or Donald Trump" and asking a separate group of 10 people if they would vote for "Donald Trump or Hillary Clinton"). Suppose we observed the following data from those 2 experiments: `k1=0; k2=10`.
 
 ~~~~
 // Successes in 2 experiments
@@ -86,6 +90,7 @@ var n1 = 10;
 var n2 = 10;
 
 var model = function() {
+
   // Sample rate from uniform distribution
   var p = uniform( {a:0, b:1} );
 
@@ -94,7 +99,7 @@ var model = function() {
 
   factor(scr)
 
-  // alternatively:
+  // alternatively, you could write:
   // observe(Binomial({p: p, n: n1}), k1);
   // observe(Binomial({p: p, n: n2}), k2);
 
