@@ -4,7 +4,7 @@ title: The Full Bayesian Thing
 ---
 
 # Bayesian data analysis of a Bayesian model
-**To Run**: Copy to codebox on [agentmodels.org](http://agentmodels.org/chapters/4-reasoning-about-agents.html)
+**To Run**: Copy to codebox on [agentmodels.org](http://agentmodels.org/chapters/7-multi-agent.html)
 
 ~~~~
 var actions = ['italian', 'french'];
