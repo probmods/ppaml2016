@@ -2,6 +2,8 @@
 layout: subchapter
 title: Data - prediction (VAE)
 custom_js:
+- /assets/js/paper-full.min.js
+- /assets/js/draw.js
 - /assets/js/sketch.js
 - /assets/js/knear.js
 - /assets/js/mnist-io.js
@@ -110,6 +112,48 @@ var printPixels = function(t) {
    ar.slice(6,9).join(' ')
   ].join('\n'))
 }
+
+var sampleMatrix = function() {
+  var mu = zeros([18,1]);
+  var sigma = ones([18,1]);
+  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}));
+  return T.reshape(v, [9,2]);
+}
+
+var drawPixels = function(pixels) {
+  // pixels is expected to be a tensor with dims [9,1]
+  var pSize = 30; // pixel size
+  var radius = 17;
+  var canvas = Draw(pSize * 3, pSize * 3, true);
+  map(function(y) {
+    map(function(x) {
+      if (T.get(pixels, (y * 3) + x)) {
+        canvas.polygon((x+0.5)*pSize, (y+0.5)*pSize, 4, radius, 0, true)
+      }
+    }, _.range(3))
+  }, _.range(3))
+  return;
+}
+
+var drawLatents = function(tensors) {
+  // turn array of tensors in to array of arrays.
+  var zs = map(function(t) {
+    map(function(i) { T.get(t, i);  }, _.range(2))
+  }, tensors)
+
+  var size = 400;
+  var canvas = Draw(size, size, true);
+
+  var drawPoints = function(canvas, positions, color){
+    if (positions.length == 0) { return []; }
+    var next = positions[0];
+    canvas.circle(next[0]*100+(size/2), next[1]*100+(size/2), 2, color, color);
+    drawPoints(canvas, positions.slice(1), color);
+  };
+
+  drawPoints(canvas, zs.slice(0, 50), 'red')
+  drawPoints(canvas, zs.slice(50), 'blue')
+};
 ///
 
 var letterL = Vector([1,0,0,
@@ -123,14 +167,6 @@ var number7 = Vector([1,1,1,
 var data = append(repeat(50, function() { letterL }),
                   repeat(50, function() { number7 }))
 
-var sampleMatrix = ///fold:
-function() {
-  var mu = zeros([18,1]);
-  var sigma = ones([18,1]);
-  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}));
-  return T.reshape(v, [9,2]);
-}
-///
 
 var model = function() {
 
@@ -157,9 +193,12 @@ var out = sample(dist);
 var W = out.W;
 var someZs = repeat(10, function() { uniformDraw(out.zs) })
 map(function(z) {
-  printPixels(T.sigmoid(T.dot(W, z)))
-  print('---------')
+  var pixels = T.sigmoid(T.dot(W, z));
+  printPixels(pixels);
+  //drawPixels( pixels )
 }, someZs)
+
+drawLatents(out.zs)
 ~~~~
 
 Inference in this model will work... but how well?
@@ -199,6 +238,13 @@ var printPixels = function(t) {
   ].join('\n'))
 }
 
+var sampleMatrix = function() {
+  var mu = zeros([18,1]);
+  var sigma = ones([18,1]);
+  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}));
+  return T.reshape(v, [9,2]);
+}
+
 var letterL = Vector([1,0,0,
                       1,0,0,
                       1,1,0]);
@@ -209,15 +255,6 @@ var number7 = Vector([1,1,1,
 
 var data = append(repeat(50, function() { letterL }),
                   repeat(50, function() { number7 }))
-///
-
-var sampleMatrix = ///fold:
-function() {
-  var mu = zeros([18,1]);
-  var sigma = ones([18,1]);
-  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}));
-  return T.reshape(v, [9,2]);
-}
 ///
 
 var model = function() {
@@ -307,8 +344,7 @@ var data = append(repeat(50, function() { letterL }),
                   repeat(50, function() { number7 }))
 ///
 
-var sampleMatrix = ///fold:
-function() {
+var sampleMatrix = function() {
   var mu = zeros([18,1]);
   var sigma = ones([18,1]);
   var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
@@ -318,7 +354,6 @@ function() {
   });
   return T.reshape(v, [9,2]);
 }
-///
 
 var model = function() {
 
@@ -411,10 +446,8 @@ var number7 = Vector([1,1,1,
 
 var data = append(repeat(50, function() { letterL }),
                   repeat(50, function() { number7 }))
-///
 
-var sampleMatrix = ///fold:
-function() {
+var sampleMatrix = function() {
   var mu = zeros([18,1]);
   var sigma = ones([18,1]);
   var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
