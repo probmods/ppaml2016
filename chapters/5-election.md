@@ -98,9 +98,9 @@ Can you think of any?
 
 ~~~~
 var dist0 = {
-  d: 0.47,
-  r: 0.43,
-  u: 0.10,
+  d: 0.40,
+  r: 0.40,
+  u: 0.20
 };
 
 var alpha = 200;
