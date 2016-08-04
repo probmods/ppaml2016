@@ -103,7 +103,7 @@ var dist0 = {
   u: 0.20
 };
 
-var alpha = 200;
+var alpha = 0.02;
 
 var step = function(curDist) {
   var d = curDist.d, r = curDist.r, u = curDist.u;
@@ -162,7 +162,7 @@ var dist0 = {
   u: 0.20
 };
 
-var alpha = 200;
+var alpha = 0.02;
 
 var step = function(curDist) {
   var d = curDist.d, r = curDist.r, u = curDist.u;
@@ -286,8 +286,9 @@ var pollsDist = Infer(
 
     var observePoll = function(counts) {
       var currentPs = _.values(_.last(globalStore.path))
-       observe(Multinomial({n: sum(counts), ps: currentPs},
-               counts)
+      factor(Multinomial({n: sum(counts),
+                          ps: currentPs
+                         }).score(counts))
     }
 
     tick();
@@ -316,7 +317,7 @@ viz.density(pollsDist, {bounds: [0, 0.2]});
 'm: ' + expectation(pollsDist).toFixed(3) +
   ' sd: ' + sd(pollsDist).toFixed(3)
 
-// all time steps
+// // all time steps
 // viz.auto(pollsDist, {bounds: {t0: [0, 0.3], t1: [0, 0.3], t2: [0, 0.3],
 //                               t3: [0, 0.3], t4: [0, 0.3], t5: [0, 0.3]
 //                              }})
