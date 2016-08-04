@@ -152,14 +152,14 @@ viz.line(_.range(steps+1),
          map2(function(d,r) { d / (d + r) }, ds, rs))
 ~~~~
 
-later polls are more accurate than earlier polls:
+Later polls are more accurate than earlier polls:
 
 ~~~~
 ///fold:
 var dist0 = {
-  d: 0.47,
-  r: 0.43,
-  u: 0.10,
+  d: 0.40,
+  r: 0.40,
+  u: 0.20
 };
 
 var alpha = 200;
@@ -221,4 +221,104 @@ var pollsDist = Infer(
 });
 
 viz.auto(pollsDist);
+~~~~
+
+A different view of this:
+
+~~~~
+///fold:
+var dist0 = {
+  d: 0.40,
+  r: 0.40,
+  u: 0.20
+};
+
+var alpha = 0.002;
+
+var step = function(curDist) {
+  var d = curDist.d, r = curDist.r, u = curDist.u;
+
+  var joiners  = uniform(0, 0.2  ) * u;
+  var leaversD = uniform(0, 0.001) * d;
+  var leaversR = uniform(0, 0.001) * r;
+
+  // assume that the deciders noisily mirror the people who have already decided
+  var joinerSides = dirichlet(T.mul(Vector(_.values(_.omit(curDist, 'u'))), alpha)),
+      joinersD = T.get(joinerSides, 0) * joiners,
+      joinersR = T.get(joinerSides, 1) * joiners;
+
+  return {
+    d: d - leaversD + joinersD,
+    r: r - leaversR + joinersR,
+    u: u - joiners + leaversR + leaversD
+  }
+}
+
+var evolve = function(dists, steps) {
+  if (steps == 0) {
+    return dists
+  } else {
+    var curDist = _.last(dists),
+        nextDist = step(curDist);
+    return evolve(dists.concat(nextDist), steps - 1)
+  }
+}
+
+var steps = 5;
+///
+
+var doPoll = function(pref, size) {
+  _.object(_.keys(pref),
+           multinomial({ps: _.values(pref), n: size}))
+}
+
+var pollsDist = Infer(
+  {method: 'SMC', particles: 500, rejuvSteps: 4},
+  function() {
+
+    var tick = function() {
+      if (!globalStore.path) {
+        globalStore.path = [dist0];
+      } else {
+        globalStore.path = globalStore.path.concat(step(_.last(globalStore.path)));
+      }
+    }
+
+    var observePoll = function(counts) {
+      var currentPs = _.values(_.last(globalStore.path))
+      factor(Multinomial({n: sum(counts),
+                          ps: currentPs
+                         }).score(counts))
+    }
+
+    tick();
+    tick();
+    observePoll([2400, 2400, 1200]);
+    tick();
+    tick();
+    tick();
+    // observePoll([2400, 2400, 1200]);
+    tick();
+
+    // final time step
+    return _.last(globalStore.path).u
+
+    // all time steps
+    // return _.object(['t0','t1','t2','t3','t4','t5'], _.pluck(globalStore.path, 'u'))
+});
+
+// final time step
+var sd = function(dist) {
+  var mean = expectation(dist);
+  Math.sqrt( expectation(dist, function(x) { (x - mean) * (x - mean) }) )
+}
+
+viz.density(pollsDist, {bounds: [0, 0.2]});
+'m: ' + expectation(pollsDist).toFixed(3) +
+  ' sd: ' + sd(pollsDist).toFixed(3)
+
+// all time steps
+// viz.auto(pollsDist, {bounds: {t0: [0, 0.3], t1: [0, 0.3], t2: [0, 0.3],
+//                               t3: [0, 0.3], t4: [0, 0.3], t5: [0, 0.3]
+//                              }})
 ~~~~
