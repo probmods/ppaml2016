@@ -32,9 +32,12 @@ Loading:<br />
 
 ## A simple model
 
-Here's a simple model of a 3x3 binary image:
+Here's a simple (but incomplete) model of a 3x3 binary image:
 
 ~~~~
+var f = function(z) {
+  // Not yet implemented.
+};
 var z = sample(DiagCovGaussian({
   mu: zeros([2, 1]),
   sigma: ones([2, 1])
@@ -44,14 +47,14 @@ var pixels = sample(MultivariateBernoulli({ps: probs}));
 pixels;
 ~~~~
 
-Where `f` is some function that maps our latent `z`(in $$\mathbb{R}^2$$) to a vector of probabilities.
+Where we would like `f` to be some function that maps our latent `z`(in $$\mathbb{R}^2$$) to a vector of probabilities.
 
 `sample(MultivariateBernoulli({ps: probs}))` is roughly `map(flip, probs)`.
 We just have 0/1 not true/false, and a tensor rather than an array.
 
 ## Using a neural net for `f`
 
-One possible choice of function for `f` is to use a neural net.
+One choice of function for `f` is a neural net.
 Since we don't know what the weights of the net are, so we put a prior on those:
 
 ~~~~
@@ -112,12 +115,6 @@ var number7 = Vector([1,1,1,
 var data = append(repeat(50, function() { letterL }),
                   repeat(50, function() { number7 }))
 
-var observe = function(dist, x) {
-  factor(dist.score(x))
-}
-
-// note to self: currently, if distribution is parameterized by
-// reals or tensors, we have an auto guide
 var sampleMatrix = ///fold:
 function() {
   var mu = zeros([18,1]);
@@ -135,7 +132,7 @@ var model = function() {
   var zs = map(function(x) {
     var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}));
     var probs = f(z);
-    factor(MultivariateBernoulli({ps: probs}).score(x));
+    observe(MultivariateBernoulli({ps: probs}), x);
     return z;
   }, data);
 
@@ -148,7 +145,7 @@ var dist = Infer({method: 'optimize',
                   steps: 150
                  }, model)
 
-var out = dist.sample();
+var out = sample(dist);
 var W = out.W;
 var someZs = repeat(10, function() { uniformDraw(out.zs) })
 map(function(z) {
@@ -157,29 +154,55 @@ map(function(z) {
 }, someZs)
 ~~~~
 
-Inference in this mode will work... but how well?
+Inference in this model will work... but how well?
 
-* We have 60K data points to map over if modeling mnist digits.
-* A straight-forward application of VI has *lots* of parameters to
-  optimize. Means and variances of the neural net weights, means and variances
-  of a z for each data point.
+* This straight-forward application of VI has *lots* of parameters to
+  optimize. Means and variances of the neural net weights, means and
+  variances of the latent `z` for each data point.
 * Learning the uncertainty in the weights of a neural net could be
   difficult.
+* If we wanted to model MNIST digits we would have to map over 60K
+  data points during every execution.
 
 There are changes we can make to address these problems:
 
 ## Improvement 1 - Recognition net
 
-The default guide gives us a fully factorized guide.
-i.e., each `z` would have its own independent guide distribution (this is mean-field).
+By default, VI uses a mean-field guide program. i.e. each latent
+variable will have an independent guide distribution.
 
-Instead, we can generate the guide parameters using a neural net that maps a single image to the parameters of the guide for that image.
+An alternative strategy for guiding the latent `z` is to generate the
+guide parameters using a neural net that maps a single image to the
+parameters of the guide for that image.
 
-The weights of this net are variational parameters (because they are parameters of the guide).
-Importantly we now have parameters shared across data points.
+The weights of this net are still variational parameters (because they
+are parameters of the guide), but we now have parameters shared across
+data points.
+
 This technique is one approach to "amortized inference".
 
 ~~~~
+///fold:
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
+}
+
+var letterL = Vector([1,0,0,
+                      1,0,0,
+                      1,1,0]);
+
+var number7 = Vector([1,1,1,
+                      0,0,1,
+                      0,1,0])
+
+var data = append(repeat(50, function() { letterL }),
+                  repeat(50, function() { number7 }))
+///
+
 var sampleMatrix = ///fold:
 function() {
   var mu = zeros([18,1]);
@@ -188,8 +211,6 @@ function() {
   return T.reshape(v, [9,2]);
 }
 ///
-
-var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
 
 var model = function() {
 
@@ -233,17 +254,53 @@ var model = function() {
   return {zs: zs, W: W};
 
 };
+
+util.seedRNG(1)
+var dist = Infer({method: 'optimize',
+                  optMethod: {adam: {stepSize: 0.1}},
+                  steps: 150
+                 }, model)
+
+var out = dist.sample();
+var W = out.W;
+var someZs = repeat(10, function() { uniformDraw(out.zs) })
+map(function(z) {
+  printPixels(T.sigmoid(T.dot(W, z)))
+  print('---------')
+}, someZs)
 ~~~~
 
 ## Improvement 2 - Use point estimates of the neural net weights
 
 Instead of trying to infer the full posterior over the weights of `f`,
 we can use a `Delta` distribution as the guide. When optimizing the
-elbo, this is equivalent to doing maximum likelihood with
-regularization. (i.e. MAP estimation.)
+variational objective, this is equivalent to doing maximum likelihood
+with regularization for these parameters. (i.e. MAP estimation.)
 
 ~~~~
-var sampleMatrix = function() {
+///fold:
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
+}
+
+var letterL = Vector([1,0,0,
+                      1,0,0,
+                      1,1,0]);
+
+var number7 = Vector([1,1,1,
+                      0,0,1,
+                      0,1,0])
+
+var data = append(repeat(50, function() { letterL }),
+                  repeat(50, function() { number7 }))
+///
+
+var sampleMatrix = ///fold:
+function() {
   var mu = zeros([18,1]);
   var sigma = ones([18,1]);
   var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
@@ -251,10 +308,9 @@ var sampleMatrix = function() {
     guide: Delta({v: tensorParam([18, 1], 0, 1)})
     // *** END NEW ***
   });
-  return T.reshape(v, [9,2])
+  return T.reshape(v, [9,2]);
 }
-
-var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
+///
 
 var model = function() {
 
@@ -295,14 +351,32 @@ var model = function() {
 
 };
 
-Infer({method: 'optimize', steps: 10, samples: 10}, model);
+util.seedRNG(1)
+var dist = Infer({method: 'optimize',
+                  optMethod: {adam: {stepSize: 0.1}},
+                  steps: 150
+                 }, model)
+
+var out = dist.sample();
+var W = out.W;
+var someZs = repeat(10, function() { uniformDraw(out.zs) })
+map(function(z) {
+  printPixels(T.sigmoid(T.dot(W, z)))
+  print('---------')
+}, someZs)
 ~~~~
 
 ## Improvement 3 - Use `mapData`
 
 With VI it's possible to take an optimization step without looking at
-all of the data. Contrast this with MCMC where each proposal has to
-look at all of the data. To use mini-batches, we switch from `map` to
+all of the data. Instead, we can sub-sample a mini-batch of data, and
+use only this subset to compute gradient estimates.
+
+Sub-sampling the data adds extra stochasticity to the already
+stochastic gradient estimates, but they are still correct in
+expectation.
+
+In code, all we do to use mini-batches is switch from using `map` to
 `mapData`.
 
 Note that by using `mapData` we're asserting that the choices that
@@ -310,16 +384,37 @@ happen in the function are conditionally independent, given the random
 choices the happen before the `mapData`.
 
 ~~~~
-var sampleMatrix = function() {
+///fold:
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
+}
+
+var letterL = Vector([1,0,0,
+                      1,0,0,
+                      1,1,0]);
+
+var number7 = Vector([1,1,1,
+                      0,0,1,
+                      0,1,0])
+
+var data = append(repeat(50, function() { letterL }),
+                  repeat(50, function() { number7 }))
+///
+
+var sampleMatrix = ///fold:
+function() {
   var mu = zeros([18,1]);
   var sigma = ones([18,1]);
   var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
     guide: Delta({v: tensorParam([18, 1], 0, 1)})
   });
-  return T.reshape(v, [9,2])
+  return T.reshape(v, [9,2]);
 }
-
-var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
+///
 
 var model = function() {
 
@@ -341,8 +436,8 @@ var model = function() {
     return {mu: mu, sigma: sigma};
   };
 
-  var zs = map({data: data, batchSize: 10}, function(x) {
-
+  // *** NEW ***
+  var zs = mapData({data: data, batchSize: 5}, function(x) {
     var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}), {
       guide: DiagCovGaussian(recogNet(x))
     });
@@ -360,10 +455,20 @@ var model = function() {
 
 };
 
-Infer({method: 'optimize', steps: 10, samples: 10}, model);
-~~~~
+util.seedRNG(1)
+var dist = Infer({method: 'optimize',
+                  optMethod: {adam: {stepSize: 0.1}},
+                  steps: 150
+                 }, model)
 
-## Variational Auto-encoder
+var out = dist.sample();
+var W = out.W;
+var someZs = repeat(10, function() { uniformDraw(out.zs) })
+map(function(z) {
+  printPixels(T.sigmoid(T.dot(W, z)))
+  print('---------')
+}, someZs)
+~~~~
 
 This model and inference strategy is known as the Variational
 Auto-encoder in the machine learning literature. See

@@ -13,7 +13,7 @@ var trueStatePref = function() {
   var pref = beta(1,1);
   var counts = {trump: 304, clinton: 276};
   var total = sum(_.values(counts));
-  factor(Binomial({n: total, p: pref}).score(counts.clinton))
+  observe(Binomial({n: total, p: pref}), counts.clinton);
   return pref;
 }
 var dist = Infer({method: 'MCMC', samples: 10000}, trueStatePref);
@@ -286,9 +286,8 @@ var pollsDist = Infer(
 
     var observePoll = function(counts) {
       var currentPs = _.values(_.last(globalStore.path))
-      factor(Multinomial({n: sum(counts),
-                          ps: currentPs
-                         }).score(counts))
+       observe(Multinomial({n: sum(counts), ps: currentPs},
+               counts)
     }
 
     tick();

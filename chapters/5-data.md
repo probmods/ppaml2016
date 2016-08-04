@@ -200,7 +200,7 @@ var predict = function(reported) {
   Infer(optsMH, model)
 }
 
-var dist = predict(300);
+var dist = predict(100);
 viz.auto(dist);
 expectation(dist)
 ~~~~
@@ -241,7 +241,7 @@ var model = function() {
   return sum(_.values(costs))/100
 }
 
-var dist = MH(model, 30000);
+var dist = Infer({method: 'MCMC', samples: 30000}, model);
 print("Expected cost: $" + expectation(dist))
 viz.density(dist, {bounds: [300,500]})
 ~~~~
