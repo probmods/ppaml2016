@@ -10,6 +10,12 @@ custom_css:
 - /assets/css/mnist-io.css
 ---
 
+In more traditional machine learning, we are often interested in learning simpler representations from larger data sets ($$\approx$$ small model, big data).
+We have shown that probabilistic programming is particularly well suited for a different scenario -- big model, small data (e.g., the agents chapter).
+However, these two different paradigms are starting to inform each other; in this example,  we'll look at the webppl approach to handling a more traditional ML tasks: encoding handwritten digits.
+
+# An awful MNIST demo
+
 <!-- nb: for drawing to work properly,  have to declare width with element attributes, not css -->
 <div class='mnist'>
 <div class='loading'>
