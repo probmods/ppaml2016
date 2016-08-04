@@ -115,10 +115,6 @@ var number7 = Vector([1,1,1,
 var data = append(repeat(50, function() { letterL }),
                   repeat(50, function() { number7 }))
 
-var observe = function(dist, x) {
-  factor(dist.score(x))
-}
-
 // note to self: currently, if distribution is parameterized by
 // reals or tensors, we have an auto guide
 var sampleMatrix = ///fold:
@@ -138,7 +134,7 @@ var model = function() {
   var zs = map(function(x) {
     var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}));
     var probs = f(z);
-    factor(MultivariateBernoulli({ps: probs}).score(x));
+    observe(MultivariateBernoulli({ps: probs}), x);
     return z;
   }, data);
 
