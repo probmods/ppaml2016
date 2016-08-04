@@ -208,7 +208,9 @@ Advantages:
 
 ## Censored weight regression
 
-Make some synthetic data and censor it:
+Now, an example where we first learn some parameters from data and then use them to make predictions about new settings.
+
+First, make some synthetic data and censor it:
 
 ~~~~
 var genders = repeat(50, function() { uniformDraw(['m','f'])});
