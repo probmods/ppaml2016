@@ -187,6 +187,27 @@ data points.
 This technique is one approach to "amortized inference".
 
 ~~~~
+///fold:
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
+}
+
+var letterL = Vector([1,0,0,
+                      1,0,0,
+                      1,1,0]);
+
+var number7 = Vector([1,1,1,
+                      0,0,1,
+                      0,1,0])
+
+var data = append(repeat(50, function() { letterL }),
+                  repeat(50, function() { number7 }))
+///
+
 var sampleMatrix = ///fold:
 function() {
   var mu = zeros([18,1]);
@@ -195,8 +216,6 @@ function() {
   return T.reshape(v, [9,2]);
 }
 ///
-
-var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
 
 var model = function() {
 
@@ -240,6 +259,20 @@ var model = function() {
   return {zs: zs, W: W};
 
 };
+
+util.seedRNG(1)
+var dist = Infer({method: 'optimize',
+                  optMethod: {adam: {stepSize: 0.1}},
+                  steps: 150
+                 }, model)
+
+var out = dist.sample();
+var W = out.W;
+var someZs = repeat(10, function() { uniformDraw(out.zs) })
+map(function(z) {
+  printPixels(T.sigmoid(T.dot(W, z)))
+  print('---------')
+}, someZs)
 ~~~~
 
 ## Improvement 2 - Use point estimates of the neural net weights
@@ -250,7 +283,29 @@ variational objective, this is equivalent to doing maximum likelihood
 with regularization for these parameters. (i.e. MAP estimation.)
 
 ~~~~
-var sampleMatrix = function() {
+///fold:
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
+}
+
+var letterL = Vector([1,0,0,
+                      1,0,0,
+                      1,1,0]);
+
+var number7 = Vector([1,1,1,
+                      0,0,1,
+                      0,1,0])
+
+var data = append(repeat(50, function() { letterL }),
+                  repeat(50, function() { number7 }))
+///
+
+var sampleMatrix = ///fold:
+function() {
   var mu = zeros([18,1]);
   var sigma = ones([18,1]);
   var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
@@ -258,10 +313,9 @@ var sampleMatrix = function() {
     guide: Delta({v: tensorParam([18, 1], 0, 1)})
     // *** END NEW ***
   });
-  return T.reshape(v, [9,2])
+  return T.reshape(v, [9,2]);
 }
-
-var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
+///
 
 var model = function() {
 
@@ -302,7 +356,19 @@ var model = function() {
 
 };
 
-Infer({method: 'optimize', steps: 10, samples: 10}, model);
+util.seedRNG(1)
+var dist = Infer({method: 'optimize',
+                  optMethod: {adam: {stepSize: 0.1}},
+                  steps: 150
+                 }, model)
+
+var out = dist.sample();
+var W = out.W;
+var someZs = repeat(10, function() { uniformDraw(out.zs) })
+map(function(z) {
+  printPixels(T.sigmoid(T.dot(W, z)))
+  print('---------')
+}, someZs)
 ~~~~
 
 ## Improvement 3 - Use `mapData`
@@ -323,16 +389,37 @@ happen in the function are conditionally independent, given the random
 choices the happen before the `mapData`.
 
 ~~~~
-var sampleMatrix = function() {
+///fold:
+var printPixels = function(t) {
+  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
+  print([ar.slice(0,3).join(' '),
+   ar.slice(3,6).join(' '),
+   ar.slice(6,9).join(' ')
+  ].join('\n'))
+}
+
+var letterL = Vector([1,0,0,
+                      1,0,0,
+                      1,1,0]);
+
+var number7 = Vector([1,1,1,
+                      0,0,1,
+                      0,1,0])
+
+var data = append(repeat(50, function() { letterL }),
+                  repeat(50, function() { number7 }))
+///
+
+var sampleMatrix = ///fold:
+function() {
   var mu = zeros([18,1]);
   var sigma = ones([18,1]);
   var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
     guide: Delta({v: tensorParam([18, 1], 0, 1)})
   });
-  return T.reshape(v, [9,2])
+  return T.reshape(v, [9,2]);
 }
-
-var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
+///
 
 var model = function() {
 
@@ -355,7 +442,7 @@ var model = function() {
   };
 
   // *** NEW ***
-  var zs = mapData({data: data, batchSize: 1}, function(x) {
+  var zs = mapData({data: data, batchSize: 5}, function(x) {
 
     var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}), {
       guide: DiagCovGaussian(recogNet(x))
@@ -374,7 +461,19 @@ var model = function() {
 
 };
 
-Infer({method: 'optimize', steps: 10, samples: 10}, model);
+util.seedRNG(1)
+var dist = Infer({method: 'optimize',
+                  optMethod: {adam: {stepSize: 0.1}},
+                  steps: 150
+                 }, model)
+
+var out = dist.sample();
+var W = out.W;
+var someZs = repeat(10, function() { uniformDraw(out.zs) })
+map(function(z) {
+  printPixels(T.sigmoid(T.dot(W, z)))
+  print('---------')
+}, someZs)
 ~~~~
 
 This model and inference strategy is known as the Variational
