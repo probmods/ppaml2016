@@ -158,58 +158,6 @@ viz.marginals(posterior)
 
 # Part 2: Making predictions from data
 
-## Censored regression with multiple noise sources
-
-We give people a scale and ask them to weigh themselves and report the numbers. There are some realistic complications:
-
-1. The scale has a maximum limit (making this a so-called censored model)
-1. Peoples' weights fluctuate
-1. There's a systematic bias for people to under-report their weights
-
-What we really care about is just estimates of peoples' true weight, don't care that much about interpreting parameters (though #4 is kind of interesting)
-
-
-~~~~
-var predict = function(reported) {
-
-  var driftKernel = function(prevVal) {
-    var a = 200;
-    var prop = reported / 600;
-    return Beta({a: a, b: a * (1-prop) / prop});
-  }
-
-  var model = function() {
-    var latent = 600 * sample(Beta({a: 2, b: 5}),
-                              {driftKernel: driftKernel});
-
-    // weight fluctuations throughout the day
-    var noise1 = gaussian({mu: 0, sigma: 3});
-
-    // systematic underreporting
-    var noise2 = -5 * beta({a: 3, b: 3});
-
-    // scale has a maximum weight
-    var observed = Math.min(300,
-                            latent + noise1 + noise2);
-
-    factor(-Math.pow(observed - reported, 2));
-    return latent
-  }
-
-  var optsMH = {method: 'MCMC',
-                samples: 2e5,
-                verbose: false,
-                callbacks: [editor.MCMCProgress()],
-                burn: 5e4}
-
-  Infer(optsMH, model)
-}
-
-var dist = predict(100);
-viz.auto(dist);
-expectation(dist)
-~~~~
-
 ## Uncertain and reversible financial models
 
 Estimating Amazon hosting costs for a fictional video streaming company:
@@ -255,6 +203,88 @@ Advantages:
 
 - Gives uncertainties about price
 - Can ask what-if questions: what if B goes viral? what could cause costs to be high?
+
+## Censored weight regression
+
+Make some synthetic data and censor it:
+
+~~~~
+var genders = repeat(50, function() { uniformDraw(['m','f'])});
+var heights = map(function(g) { gaussian(g == 'm' ? 11 : 10, 3) },
+                  genders)
+
+var interceptMap = {m: 4, f: 0},
+    slopeMap = {m: 10, f: 8};
+
+var weights = map2(function(h,g) {
+  var intercept = interceptMap[g];
+  var slope = slopeMap[g];
+  return intercept + slope * h + gaussian(0, 1.5);
+},
+                   heights,
+                   genders);
+
+var pureData = map(function(i) {
+  return {height: heights[i], weight: weights[i], gender: genders[i]}
+}, _.range(50))
+
+print('pure data:')
+viz.scatter(pureData)
+
+var data = map(function(i) {
+  return {height: heights[i], weight: Math.min(110, weights[i]), gender: genders[i]}
+}, _.range(50))
+
+print('censored data:')
+viz.scatter(data)
+
+editor.put('censored', data)
+~~~~
+
+Learn parameters from data and use it to predict Bob's weight:
+
+~~~~
+var data = editor.get('censored');
+
+var bob = {
+  height: 12,
+  gender: 'm'
+}
+
+var model = function() {
+  var slopeMap = {
+    m: uniform(5, 15),
+    f: uniform(5, 15)
+  };
+  var interceptMap = {
+    m: uniform(0, 10),
+    f: uniform(0, 10)
+  };
+
+  var predictWeight = function(person) {
+    var intercept = interceptMap[person.gender];
+    var slope = slopeMap[person.gender];
+    return intercept + slope * person.height;
+  }
+
+  map(function(person) {
+    var sampledWeight = predictWeight(person);
+    observe(Gaussian({mu: Math.min(110, sampledWeight), sigma: 1}), person.weight);
+  },
+     data)
+
+  predictWeight(bob)
+}
+
+var dist = Infer({method: 'MCMC',
+                  kernel: {HMC: {stepSize: 0.02, steps: 10}},
+                  samples: 1000,
+                  callbacks: [editor.MCMCProgress()]},
+                 model)
+
+viz.auto(dist)
+~~~~
+
 
 ## Variational autoencoder
 
