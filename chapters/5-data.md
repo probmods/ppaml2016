@@ -204,7 +204,9 @@ viz.density(dist, {bounds: [300,500]})
 Advantages:
 
 - Gives uncertainties about price
-- Can ask what-if questions: what if B goes viral? what could cause costs to be high?
+- Can ask what-if questions: what if B goes viral?
+
+Exercise: play with what the request priors and ask, under your priors, what could cause costs to be high?
 
 ## Censored weight regression
 
@@ -288,6 +290,11 @@ var dist = Infer({method: 'MCMC',
 
 viz.auto(dist)
 ~~~~
+
+Exercise: add one or two more sources of noise to this example:
+
+- Fluctuation in actual weight. This assumes that people's true weight fluctuates throughout the day.
+- Systematic underreporting. If you ask people to self-report their weight, they might report slightly lower numbers than the scale.
 
 ## Presidential election
 
