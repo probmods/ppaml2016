@@ -127,7 +127,7 @@ var drawPixels = function(pixels) {
   var canvas = Draw(pSize * 3, pSize * 3, true);
   map(function(y) {
     map(function(x) {
-      if (T.get(pixels, (y * 3) + x)) {
+      if (T.get(pixels, (y * 3) + x) > 0.5) {
         canvas.polygon((x+0.5)*pSize, (y+0.5)*pSize, 4, radius, 0, true)
       }
     }, _.range(3))
@@ -194,8 +194,7 @@ var W = out.W;
 var someZs = repeat(10, function() { uniformDraw(out.zs) })
 map(function(z) {
   var pixels = T.sigmoid(T.dot(W, z));
-  printPixels(pixels);
-  //drawPixels( pixels )
+  drawPixels(pixels)
 }, someZs)
 
 drawLatents(out.zs)
