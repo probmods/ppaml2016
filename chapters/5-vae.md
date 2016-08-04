@@ -512,5 +512,5 @@ map(function(z) {
 
 This model and inference strategy is known as the Variational
 Auto-encoder in the machine learning literature. See
-[vae.wppl](https://github.com/probmods/webppl-daipp/blob/master/examples/vae.wppl)
-for a more complete demo.
+[vae.wppl](https://github.com/null-a/webppl-vae) for an example of
+using this on the mnist data set.
