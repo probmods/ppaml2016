@@ -37,7 +37,7 @@ Loading:<br />
 
 An important idea in tasks such as these is that of a compressed representation (e.g., a 7 segment display).
 
-# Modeling binary images
+# Encoding binary images
 
 ## A simple model
 
