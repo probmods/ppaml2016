@@ -32,9 +32,12 @@ Loading:<br />
 
 ## A simple model
 
-Here's a simple model of a 3x3 binary image:
+Here's a simple (but incomplete) model of a 3x3 binary image:
 
 ~~~~
+var f = function(z) {
+  // Not yet implemented.
+};
 var z = sample(DiagCovGaussian({
   mu: zeros([2, 1]),
   sigma: ones([2, 1])
@@ -44,14 +47,14 @@ var pixels = sample(MultivariateBernoulli({ps: probs}));
 pixels;
 ~~~~
 
-Where `f` is some function that maps our latent `z`(in $$\mathbb{R}^2$$) to a vector of probabilities.
+Where we would like `f` to be some function that maps our latent `z`(in $$\mathbb{R}^2$$) to a vector of probabilities.
 
 `sample(MultivariateBernoulli({ps: probs}))` is roughly `map(flip, probs)`.
 We just have 0/1 not true/false, and a tensor rather than an array.
 
 ## Using a neural net for `f`
 
-One possible choice of function for `f` is to use a neural net.
+One choice of function for `f` is a neural net.
 Since we don't know what the weights of the net are, so we put a prior on those:
 
 ~~~~
@@ -157,26 +160,30 @@ map(function(z) {
 }, someZs)
 ~~~~
 
-Inference in this mode will work... but how well?
+Inference in this model will work... but how well?
 
-* We have 60K data points to map over if modeling mnist digits.
-* A straight-forward application of VI has *lots* of parameters to
-  optimize. Means and variances of the neural net weights, means and variances
-  of a z for each data point.
+* This straight-forward application of VI has *lots* of parameters to
+  optimize. Means and variances of the neural net weights, means and
+  variances of the latent `z` for each data point.
 * Learning the uncertainty in the weights of a neural net could be
   difficult.
+* If we wanted to model MNIST digits we would have to map over 60K
+  data points during every execution.
 
 There are changes we can make to address these problems:
 
 ## Improvement 1 - Recognition net
 
-The default guide gives us a fully factorized guide.
-i.e., each `z` would have its own independent guide distribution (this is mean-field).
+The default guide gives us a fully factorized guide. i.e. each `z` has
+an independent guide distribution. (This is called mean-field
+variational inference.)
 
 Instead, we can generate the guide parameters using a neural net that maps a single image to the parameters of the guide for that image.
 
-The weights of this net are variational parameters (because they are parameters of the guide).
-Importantly we now have parameters shared across data points.
+The weights of this net are still variational parameters (because they
+are parameters of the guide), but we now have parameters shared across
+data points.
+
 This technique is one approach to "amortized inference".
 
 ~~~~
@@ -239,8 +246,8 @@ var model = function() {
 
 Instead of trying to infer the full posterior over the weights of `f`,
 we can use a `Delta` distribution as the guide. When optimizing the
-elbo, this is equivalent to doing maximum likelihood with
-regularization. (i.e. MAP estimation.)
+variational objective, this is equivalent to doing maximum likelihood
+with regularization for these parameters. (i.e. MAP estimation.)
 
 ~~~~
 var sampleMatrix = function() {
@@ -301,8 +308,14 @@ Infer({method: 'optimize', steps: 10, samples: 10}, model);
 ## Improvement 3 - Use `mapData`
 
 With VI it's possible to take an optimization step without looking at
-all of the data. Contrast this with MCMC where each proposal has to
-look at all of the data. To use mini-batches, we switch from `map` to
+all of the data. Instead, we can sub-sample a mini-batch of data, and
+use only this subset to compute gradient estimates.
+
+Sub-sampling the data adds extra stochasticity to the already
+stochastic gradient estimates, but they are still correct in
+expectation.
+
+In code, all we do to use mini-batches is switch from using `map` to
 `mapData`.
 
 Note that by using `mapData` we're asserting that the choices that
@@ -341,7 +354,8 @@ var model = function() {
     return {mu: mu, sigma: sigma};
   };
 
-  var zs = map({data: data, batchSize: 10}, function(x) {
+  // *** NEW ***
+  var zs = mapData({data: data, batchSize: 1}, function(x) {
 
     var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}), {
       guide: DiagCovGaussian(recogNet(x))
@@ -362,8 +376,6 @@ var model = function() {
 
 Infer({method: 'optimize', steps: 10, samples: 10}, model);
 ~~~~
-
-## Variational Auto-encoder
 
 This model and inference strategy is known as the Variational
 Auto-encoder in the machine learning literature. See
