@@ -44,15 +44,16 @@ An important idea in tasks such as these is that of a compressed representation 
 Here's a simple (but incomplete) model of a 3x3 binary image:
 
 ~~~~
-var f = function(z) {
-  // Not yet implemented.
-};
 // a latent code for some image
 var z = sample(DiagCovGaussian({
   mu: zeros([2, 1]),
   sigma: ones([2, 1])
 }));
-var probs = f(z); // decoder
+// todo: a decoder
+var f = function(z) {
+  // Not yet implemented.
+};
+var probs = f(z);
 var pixels = sample(MultivariateBernoulli({ps: probs}));
 pixels;
 ~~~~
