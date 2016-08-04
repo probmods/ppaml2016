@@ -122,7 +122,7 @@ viz.marginals(posterior)
 
 ### Exercises 2
 
-1.  What do you conclude about the descriptive adequacy of the model, based on the relationship between the observed data and the posterior predictive distribution?
+1.  What do you conclude about the descriptive adequacy of the model, based on the relationship between the observed data and the posterior predictive distribution? Recall the observed data is `k1 = 0; n1 = 10` and  `k2 = 10; n2 = 10`.
 
 2. What can you conclude about the parameter `theta`?
 
