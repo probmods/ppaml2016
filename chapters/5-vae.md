@@ -42,7 +42,7 @@ var z = sample(DiagCovGaussian({
   mu: zeros([2, 1]),
   sigma: ones([2, 1])
 }));
-var probs = f(z);
+var probs = f(z); // decoder
 var pixels = sample(MultivariateBernoulli({ps: probs}));
 pixels;
 ~~~~

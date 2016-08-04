@@ -158,6 +158,8 @@ viz.marginals(posterior)
 
 # Part 2: Making predictions from data
 
+Some times, we're more interested in getting model *predictions* than, say, analyzing learned model *parameters*.
+
 ## Uncertain and reversible financial models
 
 Estimating Amazon hosting costs for a fictional video streaming company:
@@ -289,7 +291,7 @@ viz.auto(dist)
 
 [link]({{ "/chapters/5-election.html" | prepend: site.baseurl }})
 
-## Variational autoencoder
+## Digit classification
 
 [link]({{ "/chapters/5-vae.html" | prepend: site.baseurl }})
 
@@ -303,6 +305,3 @@ Extend any of these analysis or prediction examples
 Other ideas:
 
 - Power of Ten (Planet Money podcast)
-- Mark and recapture
-- Good-Turing estimator
-- (really hard?) Figure out how to perform inference on the weight prediction model with using drift kernels
