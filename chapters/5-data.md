@@ -7,11 +7,11 @@ custom_js:
 description: "Analyzing data to gain insight into the processes that may have generated it and to make predictions on new data."
 ---
 
-# Bayesian data analysis
+# Part 1: Bayesian data analysis
 
 Statistical analysis of data is useful for understanding the processes that may have generated that data and to make predictions about new data. Bayesian data analysis is a general purpose data analysis approach for making explicit hypotheses about where the data came from (e.g. the hypothesis that data from 2 experimental conditions came from two different distributions). Inference is then performed to *invert* the model: go from data to inferences about hypotheses. In this chapter, we will walk through some basic Bayesian data analysis models, and gradually build more complex models of data.
 
-Many of the examples and explanations of basic concepts are borrowed from Lee & Wagenmakers (2013) [[link]](https://bayesmodels.com/).
+Many of the examples and explanations of basic concepts are borrowed from [Lee & Wagenmakers (2013)](https://bayesmodels.com/).
 
 ## Basics: Parameters and predictives
 
@@ -127,11 +127,11 @@ viz.marginals(posterior)
 2. What can you conclude about the parameter `theta`?
 
 
-## A - B testing
+## A/B testing
 
 [link]({{ "/chapters/5-ab.html" | prepend: site.baseurl }})
 
-<!-- 
+<!--
 - Resources
   - This is a shortened version of MH's BDA course.
   - http://forestdb.org/models/bayesian-data-analysis.html
@@ -149,7 +149,9 @@ viz.marginals(posterior)
 
 [link]({{ "/chapters/5-bdaBCM.html" | prepend: site.baseurl }})
 
-# Making predictions from data
+<hr style='width: 180%; height: 0; border: 1px solid #99ccff'/>
+
+# Part 2: Making predictions from data
 
 ## Censored regression with multiple noise sources
 
@@ -224,7 +226,7 @@ var model = function() {
     }
   ];
   var storage =  sum(map(function(r) { r.size },               resources))
- var requests = sum(map(function(r) { r.requests },           resources))
+  var requests = sum(map(function(r) { r.requests },           resources))
   var transfer = sum(map(function(r) { r.requests * r.size  }, resources))
 
   var costs = {

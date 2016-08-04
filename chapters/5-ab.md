@@ -15,7 +15,7 @@ This is a what's called an A/B Test (here, a grey/green test). A/B testing is em
 
 ## Inferring a rate
 
-You collect data on 100 visitors to your website. Your data includes the banner color each visitors was assigned (grey or green), the amount of time they spent on the website, whether or not their visitor "converted" (i.e., they bought your product, or signed up for your service), and misc demographic data (their browswer, location). 
+You collect data on 100 visitors to your website. Your data includes the banner color each visitors was assigned (grey or green), the amount of time they spent on the website, whether or not their visitor "converted" (i.e., they bought your product, or signed up for your service), and misc demographic data (their browser, location).
 
 Let's take a look at the data.
 
