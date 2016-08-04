@@ -238,22 +238,22 @@ $(function() {
     var pixels = extractPixels();
 
     // visualize downsampled picture
-    var i = 0;
-    var table = ["<table>"];
-    for(var r = 0; r < 28; r++) {
-      var row = ["<tr>"];
-      for(var c = 0; c < 28; c++) {
-        var pixel = pixels[i],
-            className = (pixel == 1 ? 'on' : 'off');
-        row.push('<td class="' + className  +  '">&nbsp</td>');
-        i++;
-      }
-      row.push("</tr>");
-      table.push(row.join(""))
-    }
-    table.push("</table>");
-    table = table.join("\n");
-    $(".mnist .downsampled").html(table);
+    // var i = 0;
+    // var table = ["<table>"];
+    // for(var r = 0; r < 28; r++) {
+    //   var row = ["<tr>"];
+    //   for(var c = 0; c < 28; c++) {
+    //     var pixel = pixels[i],
+    //         className = (pixel == 1 ? 'on' : 'off');
+    //     row.push('<td class="' + className  +  '">&nbsp</td>');
+    //     i++;
+    //   }
+    //   row.push("</tr>");
+    //   table.push(row.join(""))
+    // }
+    // table.push("</table>");
+    // table = table.join("\n");
+    // $(".mnist .downsampled").html(table);
 
     var afterClassify = function(s,x) {
       $(".mnist .result span").text(knn.classify(x.mu.data))
