@@ -35,7 +35,10 @@ Loading:<br />
 here's a simple model of a 3x3 binary image:
 
 ~~~~
-var z = sample(TensorGaussian({mu: 0, sigma: 1, dims: [2, 1]}));
+var z = sample(DiagCovGaussian({
+  mu: zeros([2, 1]),
+  sigma: ones([2, 1])
+}));
 var probs = f(z);
 var pixels = sample(MultivariateBernoulli({ps: probs}));
 pixels;
@@ -63,9 +66,16 @@ var printPixels = function(t) {
 }
 ///
 
-var z = sample(TensorGaussian({mu: 0, sigma: 1, dims: [2, 1]}));
+var sampleMatrix = function() {
+  var mu = zeros([18,1]);
+  var sigma = ones([18,1]);
+  T.reshape(sample(DiagCovGaussian({mu: mu, sigma: sigma})),
+            [9,2])
+};
 
-var W = sample(TensorGaussian({mu: 0, sigma: 1, dims: [9, 2]}));
+var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}));
+
+var W = sampleMatrix();
 var f = function(z) {
   return T.sigmoid(T.dot(W, z));
 };
@@ -115,8 +125,8 @@ var sampleMatrix = ///fold:
 function() {
   var mu = zeros([18,1]);
   var sigma = ones([18,1]);
-  T.reshape(sample(DiagCovGaussian({mu: mu, sigma: sigma})),
-            [9,2])
+  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}));
+  return T.reshape(v, [9,2]);
 }
 ///
 
@@ -174,11 +184,20 @@ importantly we now have parameters shared across data points.
 say "amortized inference" perhaps?
 
 ~~~~
+var sampleMatrix = ///fold:
+function() {
+  var mu = zeros([18,1]);
+  var sigma = ones([18,1]);
+  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}));
+  return T.reshape(v, [9,2]);
+}
+///
+
 var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
 
 var model = function() {
 
-  var W = sample(TensorGaussian({mu: 0, sigma: 1, dims: [9, 2]}));
+  var W = sampleMatrix();
 
   var f = function(z) {
     return T.sigmoid(T.dot(W, z));
@@ -200,7 +219,7 @@ var model = function() {
 
   var zs = map(function(x) {
 
-    var z = sample(TensorGaussian({mu: 0, sigma: 1, dims: [2, 1]}), {
+    var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}), {
       // *** START NEW ***
       guide: DiagCovGaussian(recogNet(x))
       // *** END NEW ***
@@ -225,15 +244,22 @@ var model = function() {
 instead of trying to infer the full posterior over the weights of `f`, we can use a `Delta`distribution as the guide. when optimizing the elbo, this is equivalent to doing maximum likelihood with regularization. (i should really double check the math here...)
 
 ~~~~
+var sampleMatrix = function() {
+  var mu = zeros([18,1]);
+  var sigma = ones([18,1]);
+  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
+    // *** START NEW ***
+    guide: Delta({v: tensorParam([18, 1], 0, 1)})
+    // *** END NEW ***
+  });
+  return T.reshape(v, [9,2])
+}
+
 var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
 
 var model = function() {
 
-  var W = sample(TensorGaussian({mu: 0, sigma: 1, dims: [9, 2]}), {
-    // *** START NEW ***
-    guide: Delta({v: tensorParam([9, 2], 0, 0.1)})
-    // *** END NEW ***
- });
+  var W = sampleMatrix()
 
   var f = function(z) {
     return T.sigmoid(T.dot(W, z));
@@ -253,7 +279,7 @@ var model = function() {
 
   var zs = map(function(x) {
 
-    var z = sample(TensorGaussian({mu: 0, sigma: 1, dims: [2, 1]}), {
+    var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}), {
       guide: DiagCovGaussian(recogNet(x))
     });
 
