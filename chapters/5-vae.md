@@ -28,11 +28,11 @@ Loading:<br />
 </div>
 
 
-# model binary images
+# Modeling binary images
 
-## a simple model
+## A simple model
 
-here's a simple model of a 3x3 binary image:
+Here's a simple model of a 3x3 binary image:
 
 ~~~~
 var z = sample(DiagCovGaussian({
@@ -44,16 +44,15 @@ var pixels = sample(MultivariateBernoulli({ps: probs}));
 pixels;
 ~~~~
 
-`f` is some function that maps our latent `z`(in $$\mathbb{R}^2$$) to a vector of probabilities.
+Where `f` is some function that maps our latent `z`(in $$\mathbb{R}^2$$) to a vector of probabilities.
 
 `sample(MultivariateBernoulli({ps: probs}))` is roughly `map(flip, probs)`.
 We just have 0/1 not true/false, and a tensor rather than an array.
 
-## use a neural net for f
+## Using a neural net for `f`
 
-
-we can use a neural net for `f`.
-we don't know what the weights of the net are, so we put a prior on those:
+One possible choice of function for `f` is to use a neural net.
+Since we don't know what the weights of the net are, so we put a prior on those:
 
 ~~~~
 ///fold:
@@ -86,12 +85,10 @@ var pixels = sample(MultivariateBernoulli({ps: probs}));
 printPixels(pixels)
 ~~~~
 
-this program now runs.
+## Add observations
 
-## add observations
-
-we can extend this to multiple images, and add observations in the usual way.
-note that the neural net `f` is shared across all data points.
+We can extend this to multiple images, and add observations in the usual way.
+Note that the neural net `f` is shared across all data points.
 
 ~~~~
 ///fold:
@@ -160,28 +157,27 @@ map(function(z) {
 }, someZs)
 ~~~~
 
-inference should work... but how well?
+Inference in this mode will work... but how well?
 
-* we have 60K data points to map over if modeling mnist digits.
-* a straight-forward application of vi has *lots* of parameters to
-  optimize. means and variances of the nn weights, means and variances
+* We have 60K data points to map over if modeling mnist digits.
+* A straight-forward application of VI has *lots* of parameters to
+  optimize. Means and variances of the neural net weights, means and variances
   of a z for each data point.
-*what else?...
+* Learning the uncertainty in the weights of a neural net could be
+  difficult.
 
-(note the vi doesn't work on the model at this point because `TensorGaussian` can't be guided automatically. i can fix that if we'd like to show it?)
+There are changes we can make to address these problems:
 
-we can make some improvements...
+## Improvement 1 - Recognition net
 
-## improvement 1 - recognition net
-
-the default guide (if it worked, see above) would give us a fully factorized guide.
+The default guide gives us a fully factorized guide.
 i.e., each `z` would have its own independent guide distribution (this is mean-field).
 
-instead, we can generate the guide parameters using a neural net that maps a single image to the parameters of the guide for that image.
+Instead, we can generate the guide parameters using a neural net that maps a single image to the parameters of the guide for that image.
 
-the weights of this net are variational parameters (because they are parameters of the guide).
-importantly we now have parameters shared across data points.
-say "amortized inference" perhaps?
+The weights of this net are variational parameters (because they are parameters of the guide).
+Importantly we now have parameters shared across data points.
+This technique is one approach to "amortized inference".
 
 ~~~~
 var sampleMatrix = ///fold:
@@ -239,9 +235,12 @@ var model = function() {
 };
 ~~~~
 
-## improvement 2 - use point estimates of the neural net weights
+## Improvement 2 - Use point estimates of the neural net weights
 
-instead of trying to infer the full posterior over the weights of `f`, we can use a `Delta`distribution as the guide. when optimizing the elbo, this is equivalent to doing maximum likelihood with regularization. (i should really double check the math here...)
+Instead of trying to infer the full posterior over the weights of `f`,
+we can use a `Delta` distribution as the guide. When optimizing the
+elbo, this is equivalent to doing maximum likelihood with
+regularization. (i.e. MAP estimation.)
 
 ~~~~
 var sampleMatrix = function() {
@@ -295,24 +294,25 @@ var model = function() {
   return {zs: zs, W: W};
 
 };
-~~~~
 
-this should run, since we've now specified the guide by hand, side-stepping the problem guiding `TensorGaussian` automatically.
-
-~~~~
 Infer({method: 'optimize', steps: 10, samples: 10}, model);
 ~~~~
 
-## improvement 3 - use `mapData`
+## Improvement 3 - Use `mapData`
 
-if we switch from `map` to `mapData` we can do mini-batches.
+If we switch from `map` to `mapData` we can do mini-batches.
 
-note that by using `mapData` we're asserting that the choices that happen in the function are conditionally independent, given the stuff outside.
+Note that by using `mapData` we're asserting that the choices that
+happen in the function are conditionally independent, given the random
+choices the happen before the `mapData`.
 
 ~~~~
 // TODO: add mapData example
 ~~~~
 
-## this is the vae
+## Variational Auto-encoder
 
-see [vae.wppl](https://github.com/probmods/webppl-daipp/blob/master/examples/vae.wppl) for a more complete demo.
+This model and inference strategy is known as the Variational
+Auto-encoder in the machine learning literature. See
+[vae.wppl](https://github.com/probmods/webppl-daipp/blob/master/examples/vae.wppl)
+for a more complete demo.
