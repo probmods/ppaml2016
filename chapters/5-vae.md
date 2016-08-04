@@ -170,11 +170,12 @@ There are changes we can make to address these problems:
 
 ## Improvement 1 - Recognition net
 
-The default guide gives us a fully factorized guide. i.e. each `z` has
-an independent guide distribution. (This is called mean-field
-variational inference.)
+By default, VI uses a mean-field guide program. i.e. each latent
+variable will have an independent guide distribution.
 
-Instead, we can generate the guide parameters using a neural net that maps a single image to the parameters of the guide for that image.
+An alternative strategy for guiding the latent `z` is to generate the
+guide parameters using a neural net that maps a single image to the
+parameters of the guide for that image.
 
 The weights of this net are still variational parameters (because they
 are parameters of the guide), but we now have parameters shared across
