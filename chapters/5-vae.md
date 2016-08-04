@@ -33,6 +33,7 @@ Loading:<br />
 </div>
 </div>
 
+An important idea in tasks such as these is that of a compressed representation (e.g., a 7 segment display).
 
 # Modeling binary images
 
@@ -44,6 +45,7 @@ Here's a simple (but incomplete) model of a 3x3 binary image:
 var f = function(z) {
   // Not yet implemented.
 };
+// a latent code for some image
 var z = sample(DiagCovGaussian({
   mu: zeros([2, 1]),
   sigma: ones([2, 1])
