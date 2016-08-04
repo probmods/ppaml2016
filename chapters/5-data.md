@@ -285,14 +285,14 @@ var dist = Infer({method: 'MCMC',
 viz.auto(dist)
 ~~~~
 
+## Presidential election
+
+[link]({{ "/chapters/5-election.html" | prepend: site.baseurl }})
 
 ## Variational autoencoder
 
 [link]({{ "/chapters/5-vae.html" | prepend: site.baseurl }})
 
-## Presidential election
-
-[link]({{ "/chapters/5-election.html" | prepend: site.baseurl }})
 
 
 
