@@ -17,7 +17,7 @@ var extractPixels = function(cv) {
 
   var mode = function(xs) {
     var numOn = _.reduce(xs,
-                         function(acc, x) {return acc + (x > 128 ? 1 : 0)},
+                         function(acc, x) {return acc + (x >= 128 ? 1 : 0)},
                          0);
     var numOff = xs.length - numOn;
 
@@ -212,7 +212,7 @@ $(function() {
 
   var $canvas = $('.mnist canvas'),
       canvas = $canvas[0];
-  $canvas.sketch({defaultSize: 12});
+  $canvas.sketch({defaultSize: 15});
   sketch = $canvas.sketch();
 
   // wire up Clear button
