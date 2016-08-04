@@ -300,14 +300,67 @@ Infer({method: 'optimize', steps: 10, samples: 10}, model);
 
 ## Improvement 3 - Use `mapData`
 
-If we switch from `map` to `mapData` we can do mini-batches.
+With VI it's possible to take an optimization step without looking at
+all of the data. Contrast this with MCMC where each proposal has to
+look at all of the data. To use mini-batches, we switch from `map` to
+`mapData`.
 
 Note that by using `mapData` we're asserting that the choices that
 happen in the function are conditionally independent, given the random
 choices the happen before the `mapData`.
 
 ~~~~
-// TODO: add mapData example
+var sampleMatrix = function() {
+  var mu = zeros([18,1]);
+  var sigma = ones([18,1]);
+  var v = sample(DiagCovGaussian({mu: mu, sigma: sigma}), {
+    guide: Delta({v: tensorParam([18, 1], 0, 1)})
+  });
+  return T.reshape(v, [9,2])
+}
+
+var data = [Vector([1, 0, 0, 0, 1, 0, 0, 0, 1])];
+
+var model = function() {
+
+  var W = sampleMatrix()
+
+  var f = function(z) {
+    return T.sigmoid(T.dot(W, z));
+  };
+
+  var Wmu = tensorParam([2, 9], 0, 0.1);
+  var Wsigma = tensorParam([2, 9], 0, 0.1);
+
+  var recogNet = function(x) {
+    // the net in the vae has an extra hidden layer
+    var mu = T.dot(Wmu, x);
+    // pass through exp to ensure sigma is +ve
+    var sigma = T.exp(T.dot(Wsigma, x));
+    // these are parameters match what is expected by DiagCovGaussian
+    return {mu: mu, sigma: sigma};
+  };
+
+  var zs = map({data: data, batchSize: 10}, function(x) {
+
+    var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}), {
+      guide: DiagCovGaussian(recogNet(x))
+    });
+
+    var probs = f(z);
+
+    observe(MultivariateBernoulli({ps: probs}), x);
+
+    return z;
+
+  });
+
+  // return the things we're interested in
+  return {zs: zs, W: W};
+
+};
+
+Infer({method: 'optimize', steps: 10, samples: 10}, model);
 ~~~~
 
 ## Variational Auto-encoder
