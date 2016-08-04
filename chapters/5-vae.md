@@ -525,3 +525,5 @@ This model and inference strategy is known as the Variational
 Auto-encoder in the machine learning literature. See
 [vae.wppl](https://github.com/null-a/webppl-vae) for an example of
 using this on the mnist data set.
+
+The classifier at the top of this page was built using the latent codes in a very naive (but easy to implement) way -- k-nearest neighbors on the `mu` component.
