@@ -70,7 +70,8 @@ var model = function() {
 
   });
 
-  return conversionRates;
+  return _.extend(conversionRates, 
+                  {delta: conversionRates.green - conversionRates.grey});
 
 }
 
@@ -84,12 +85,10 @@ var inferOpts = {
 
 var posterior = Infer(inferOpts, model);
 
-viz.auto(posterior)
-viz.marginals(posterior, {bounds: [0.3, 0.7]})
+viz.marginals(posterior)
 ~~~~
 
-
-1. What can you conclude about the difference between using the grey and the green banner?
+1. Scientists often use a 95% threshold to say whether or not an inferred difference is "real". In this example, we would draw what's called a 95% *credible interval* (an interval in which there is a 95% probability that the true parameter is contained), and determine whether or not there is a real difference by seeing if this interval includes 0. By examining the figure, what can you conclude about the difference between using the grey and the green banner? 
 
 You show this analysis to your friend. She is not impressed. She reminds you that GrubWatch gets a lot of *accidental* traffic, because visitors are often interested in a different site **GrubMatch**, the slightly more popular dating website based on common food preferences. She says that dozens of visitors visit and leave your website within a few seconds, after they realize they're not at GrubMatch. She says these people are contaminating the data.
 
@@ -209,7 +208,7 @@ var marginalBonafide = marginalize(jointPosterior, "percent_bonafide");
 
 viz.hist(marginalBonafide, {numBins: 15});
 ~~~~
-
+	
 So, indeed, almost 30% of the traffic to your site was judged to be "accidental".
 
 ~~~~

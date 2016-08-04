@@ -115,8 +115,6 @@ var number7 = Vector([1,1,1,
 var data = append(repeat(50, function() { letterL }),
                   repeat(50, function() { number7 }))
 
-// note to self: currently, if distribution is parameterized by
-// reals or tensors, we have an auto guide
 var sampleMatrix = ///fold:
 function() {
   var mu = zeros([18,1]);
@@ -147,7 +145,7 @@ var dist = Infer({method: 'optimize',
                   steps: 150
                  }, model)
 
-var out = dist.sample();
+var out = sample(dist);
 var W = out.W;
 var someZs = repeat(10, function() { uniformDraw(out.zs) })
 map(function(z) {
@@ -440,7 +438,6 @@ var model = function() {
 
   // *** NEW ***
   var zs = mapData({data: data, batchSize: 5}, function(x) {
-
     var z = sample(DiagCovGaussian({mu: zeros([2,1]), sigma: ones([2,1])}), {
       guide: DiagCovGaussian(recogNet(x))
     });

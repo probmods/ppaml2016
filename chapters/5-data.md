@@ -122,7 +122,7 @@ viz.marginals(posterior)
 
 ### Exercises 2
 
-1.  What do you conclude about the descriptive adequacy of the model, based on the relationship between the observed data and the posterior predictive distribution?
+1.  What do you conclude about the descriptive adequacy of the model, based on the relationship between the observed data and the posterior predictive distribution? Recall the observed data is `k1 = 0; n1 = 10` and  `k2 = 10; n2 = 10`.
 
 2. What can you conclude about the parameter `theta`?
 
@@ -200,7 +200,7 @@ var predict = function(reported) {
   Infer(optsMH, model)
 }
 
-var dist = predict(300);
+var dist = predict(100);
 viz.auto(dist);
 expectation(dist)
 ~~~~
@@ -241,7 +241,7 @@ var model = function() {
   return sum(_.values(costs))/100
 }
 
-var dist = MH(model, 30000);
+var dist = Infer({method: 'MCMC', samples: 30000}, model);
 print("Expected cost: $" + expectation(dist))
 viz.density(dist, {bounds: [300,500]})
 ~~~~
