@@ -209,7 +209,7 @@ var marginalBonafide = marginalize(jointPosterior, "percent_bonafide");
 
 viz.hist(marginalBonafide, {numBins: 15});
 ~~~~
-
+	
 So, indeed, almost 30% of the traffic to your site was judged to be "accidental".
 
 ~~~~
