@@ -69,12 +69,19 @@ Since we don't know what the weights of the net are, so we put a prior on those:
 
 ~~~~
 ///fold:
-var printPixels = function(t) {
-  var ar = map(function(x) { x > 0.5 ? "*" : " "}, t.data);
-  print([ar.slice(0,3).join(' '),
-   ar.slice(3,6).join(' '),
-   ar.slice(6,9).join(' ')
-  ].join('\n'))
+var drawPixels = function(pixels) {
+  // pixels is expected to be a tensor with dims [9,1]
+  var pSize = 30; // pixel size
+  var radius = 17;
+  var canvas = Draw(pSize * 3, pSize * 3, true);
+  map(function(y) {
+    map(function(x) {
+      if (T.get(pixels, (y * 3) + x) > 0.5) {
+        canvas.polygon((x+0.5)*pSize, (y+0.5)*pSize, 4, radius, 0, true)
+      }
+    }, _.range(3))
+  }, _.range(3))
+  return;
 }
 ///
 
@@ -95,7 +102,7 @@ var probs = f(z);
 
 var pixels = sample(MultivariateBernoulli({ps: probs}));
 
-printPixels(pixels)
+drawPixels(pixels)
 ~~~~
 
 ## Add observations
@@ -185,29 +192,32 @@ var model = function() {
 
 util.seedRNG(1)
 var dist = Infer({method: 'optimize',
-                  optMethod: {adam: {stepSize: 0.1}},
+                  optMethod: {adam: {stepSize: 0.1}}, // note: stepSize matters a lot
                   steps: 150
                  }, model)
 
 var out = sample(dist);
 var W = out.W;
+
+print('some characters:')
 var someZs = repeat(10, function() { uniformDraw(out.zs) })
 map(function(z) {
   var pixels = T.sigmoid(T.dot(W, z));
   drawPixels(pixels)
 }, someZs)
 
+print('latent codes:')
 drawLatents(out.zs)
 ~~~~
 
 Inference in this model will work... but how well?
 
-* This straight-forward application of VI has *lots* of parameters to
+1. This straight-forward application of VI has *lots* of parameters to
   optimize. Means and variances of the neural net weights, means and
   variances of the latent `z` for each data point.
-* Learning the uncertainty in the weights of a neural net could be
+1. Learning the uncertainty in the weights of a neural net could be
   difficult.
-* If we wanted to model MNIST digits we would have to map over 60K
+1. If we wanted to model MNIST digits we would have to map over 60K
   data points during every execution.
 
 There are changes we can make to address these problems:
